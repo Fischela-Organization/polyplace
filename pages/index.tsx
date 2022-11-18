@@ -12,11 +12,18 @@ import { shortenAddress } from '../utils/shortenAddress';
 const Home = () => {
   let fetchNFTs: any 
   const [hideButtons, setHideButtons] = useState(false);
-  const [nfts, setNfts] = useState([]);
+  const [nfts, setNfts] = useState([{
+    image: "/creator9.png",
+    i: 1,
+    name: "cool do",
+    price: "2 ETH",
+    owner: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a",
+    seller: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a"
+  }]);
   const [nftsCopy, setNftsCopy] = useState([]);
   const { theme } = useTheme();
   const [activeSelect, setActiveSelect] = useState('Recently Added');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const parentRef = useRef(null);
   const scrollRef = useRef(null);
@@ -89,6 +96,15 @@ const Home = () => {
     }
   };
 
+  // let nfts: any = [{
+  //   image: "/creator9.png",
+  //   i: 1,
+  //   name: "cool do",
+  //   price: "2 ETH",
+  //   owner: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a",
+  //   seller: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a"
+  // }]
+
   useEffect(() => {
     isScrollable();
 
@@ -106,7 +122,7 @@ const Home = () => {
     <div className="flex justify-center sm:px-4 p-12">
       <div className="w-full minmd:w-4/5">
         <Banner
-          name="NFT's are birth certificates for the offspring of creators."
+          name="Own NFT's that generates true income, purchase wonderful artworks tied to passive or active income producing digital assets."
           childStyles="md:text-4xl sm:text-2xl xs:text-xl text-center"
           parentStyles="justify-start mb-6 h-72 sm:h-60 p-12 xs:p-4 xs:h-44 rounded-3xl"
         />

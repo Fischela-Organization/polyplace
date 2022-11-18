@@ -17,7 +17,7 @@ const Footer = () => {
 
               <Image src={images.logo02} objectFit="contain" width={40} height={40} alt="logo" />
             </Link>
-            <p className=" dark:text-white text-nft-dark font-semibold text-lg ml-1">Polyplace</p>
+            <p className=" dark:text-white text-nft-dark font-semibold text-lg ml-1">RealIncom</p>
           </div>
           <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-base mt-6">Get the latest updates</p>
           <div className="flexBetween md:w-full minlg:w-557 w-357 mt-6 dark:bg-nft-black-2 bg-white border dark:border-nft-black-2 border-nft-gray-2 rounded-lg">
@@ -33,7 +33,7 @@ const Footer = () => {
         </div>
         <div className="flex-1 flexBetweenStart flex-wrap ml-10 md:ml-0 md:mt-8 font-semibold">
           <div>
-            <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl mb-10">Polyplace</h2>
+            <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl mb-10">RealIncom</h2>
             <ul className="font-poppins text-nft-black-1 dark:text-white">
               <li className="mb-3">
                 <a href="https://mumbai.polygonscan.com/address/0xF5f6B924332C350E3Fcd3A50Fc94db822f0B760f" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">Smart Contract</a>
@@ -64,19 +64,19 @@ const Footer = () => {
       </div>
       <div className="flexCenter w-full mt-5 border-t dark:border-nft-black-1 border-nft-gray-1 sm:px-4 px-16">
         <div className="flexBetween flex-row w-full minmd:w-4/5 sm:flex-col mt-7 mb-0">
-          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-base">Polyplace Inc. All Rights Reserved.</p>
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-base">RealIncom Inc. All Rights Reserved.</p>
           <div className="flex flex-row sm:mt-4">
             <div className={`${theme === 'light' ? 'filter invert' : ''} space-x-6`}>
-              <a target="_blank" href="https://github.com/chrisstef" alt="github" rel="noreferrer">
+              <a target="_blank" href="https://github.com/chrisstef"  rel="noreferrer">
                 <Image src={images.github} objectFit="contain" className="cursor-pointer opacity-80 hover:opacity-100 hover:scale-105 transition duration-500" width={24} height={24} alt="github" />
               </a>
-              <a target="_blank" href="https://twitter.com/ChristosStefan4" alt="twitter" rel="noreferrer">
+              <a target="_blank" href="https://twitter.com/ChristosStefan4"  rel="noreferrer">
                 <Image src={images.twitter} objectFit="contain" className="cursor-pointer opacity-80 hover:opacity-100 hover:scale-105 transition duration-500" width={24} height={24} alt="twitter" />
               </a>
-              <a target="_blank" href="https://t.me/kaieverdream" alt="telegram" rel="noreferrer">
+              <a target="_blank" href="https://t.me/kaieverdream"  rel="noreferrer">
                 <Image src={images.telegram} objectFit="contain" className="cursor-pointer opacity-80 hover:opacity-100 hover:scale-105 transition duration-500" width={24} height={24} alt="telegram" />
               </a>
-              <a target="_blank" href="https://www.youtube.com/channel/UCtOqEoFDiyw0usiJHE5ll_Q" alt="youtube" rel="noreferrer">
+              <a target="_blank" href="https://www.youtube.com/channel/UCtOqEoFDiyw0usiJHE5ll_Q"  rel="noreferrer">
                 <Image src={images.youtube} objectFit="contain" className="cursor-pointer opacity-80 hover:opacity-100 hover:scale-105 transition duration-500" width={24} height={24} alt="youtube" />
               </a>
             </div>
