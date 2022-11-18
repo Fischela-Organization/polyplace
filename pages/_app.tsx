@@ -28,4 +28,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => (
     </ThemeProvider>
 );
 
+MyApp.displayName = 'RealIncom'
+
 export default MyApp;
