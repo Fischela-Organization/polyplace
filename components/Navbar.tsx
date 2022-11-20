@@ -9,6 +9,7 @@ import Link from 'next/link';
 import images from '../assets';
 
 import Button from './Button';
+import { ConnectButton } from '@web3uikit/web3';
 
 interface MenuItemsInterface{
   isMobile?: any, active?: any, setActive?: any, setIsOpen?: any
@@ -67,11 +68,13 @@ const ButtonGroup = ({ setActive, router, setIsOpen }: ButtonGroupInterface) => 
       }}
     />
   ) : (
-    <Button
-      btnName="Connect"
-      classStyles="mx-2 rounded-xl"
-      handleClick={connectWallet}
-    />
+    // <Button
+    //   btnName="Connect"
+    //   classStyles="mx-2 rounded-xl"
+    //   handleClick={connectWallet}
+    // />
+
+    <ConnectButton/>
   );
 };
 
