@@ -124,3 +124,20 @@
     opacity: 1;
   }
 }
+
+.vetting{
+  border: .2rem rgb(107, 104, 104) red;
+
+}
+
+.checkout-link{
+  color: #1498D5;
+  display: block;
+}
+
+.checkout-link:hover{
+  text-decoration: underline;
+  cursor: pointer;
+  color: #1474d5;
+  display: block;
+}

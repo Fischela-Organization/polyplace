@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
-
+import { useWeb3Contract, useMoralis } from "react-moralis";
 
 import { Banner, CreatorCard, Loader, NFTCard, SearchBar, withTransition } from '../components';
 
@@ -11,11 +11,13 @@ import { shortenAddress } from '../utils/shortenAddress';
 
 const Home = () => {
   let fetchNFTs: any 
+  const useMo = useMoralis()
   const [hideButtons, setHideButtons] = useState(false);
+  const isLoading = false
   const [nfts, setNfts] = useState([{
     image: "/creator9.png",
     i: 1,
-    name: "cool do",
+    name: "Candy Crush Game",
     price: "2 ETH",
     owner: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a",
     seller: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a"
@@ -23,10 +25,16 @@ const Home = () => {
   const [nftsCopy, setNftsCopy] = useState([]);
   const { theme } = useTheme();
   const [activeSelect, setActiveSelect] = useState('Recently Added');
-  const [isLoading, setIsLoading] = useState(false);
 
   const parentRef = useRef(null);
   const scrollRef = useRef(null);
+
+
+    useEffect(() => {
+    // console.log(useMo);
+    // console.log("=======================================================================")
+    // console.log(data, error, runContractFunction, isFetching, isLoading)
+  }, []);
 
   // useEffect(() => {
   //   fetchNFTs()

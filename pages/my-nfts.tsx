@@ -7,9 +7,10 @@ import withTransition from '../components/withTransition';
 import { Loader, NFTCard, Banner, SearchBar } from '../components';
 import images from '../assets';
 import { shortenAddress } from '../utils/shortenAddress';
+import { useMoralis, useWeb3Contract } from 'react-moralis';
 
 const MyNFTs = () => {
-  const { fetchMyNFTsOrListedNFTs, currentAccount }: {fetchMyNFTsOrListedNFTs: any, currentAccount: any} = {fetchMyNFTsOrListedNFTs: "", currentAccount: ""}
+  const { fetchMyNFTsOrListedNFTs, currentAccount }: { fetchMyNFTsOrListedNFTs: any, currentAccount: any } = { fetchMyNFTsOrListedNFTs: "", currentAccount: "" }
   const [nfts, setNfts] = useState([{
     image: "/creator9.png",
     i: 1,
@@ -19,17 +20,27 @@ const MyNFTs = () => {
     seller: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a"
   }]);
   const [nftsCopy, setNftsCopy] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [activeSelect, setActiveSelect] = useState('Recently Added');
+  const { data, error, runContractFunction: mintNFT, isFetching, isLoading } = useWeb3Contract({abi: [{transfer: "send"}],
+    contractAddress: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a",
+    functionName: "observe",
+    params: {
+    secondsAgos: [0, 10],
+  },});
 
-  // useEffect(() => {
-  //   fetchMyNFTsOrListedNFTs()
-  //     .then((items: any) => {
-  //       setNfts(items);
-  //       setNftsCopy(items);
-  //       setIsLoading(false);
-  //     });
-  // }, []);
+
+  const { account } = useMoralis()
+
+  useEffect(() => {
+    // fetchMyNFTsOrListedNFTs()
+    //   .then((items: any) => {
+    //     setNfts(items);
+    //     setNftsCopy(items);
+    //     setIsLoading(false);
+    //   });
+
+    console.log(account, "Account")
+  }, []);
 
   // useEffect(() => {
   //   const sortedNfts = [...nfts];
@@ -59,7 +70,7 @@ const MyNFTs = () => {
   }
 
   const onHandleSearch = (value: any) => {
-    const filteredNfts = nfts.filter(({ name }: {name: any}) => name.toLowerCase().includes(value.toLowerCase()));
+    const filteredNfts = nfts.filter(({ name }: { name: any }) => name.toLowerCase().includes(value.toLowerCase()));
 
     if (filteredNfts.length) {
       setNfts(filteredNfts);

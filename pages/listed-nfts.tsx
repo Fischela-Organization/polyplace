@@ -10,8 +10,8 @@ const ListedNFTs = () => {
   let nfts: any = [{
     image: "/creator9.png",
     i: 1,
-    name: "cool do",
-    price: "2 ETH",
+    name: "Candy Crush Game",
+    price: "4000000",
     owner: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a",
     seller: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a"
   }]

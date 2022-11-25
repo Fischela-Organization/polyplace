@@ -36,13 +36,13 @@ const Footer = () => {
             <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl mb-10">RealIncom</h2>
             <ul className="font-poppins text-nft-black-1 dark:text-white">
               <li className="mb-3">
-                <a href="https://mumbai.polygonscan.com/address/0xF5f6B924332C350E3Fcd3A50Fc94db822f0B760f" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">Smart Contract</a>
+                <a href="https://mumbai.polygonscan.com/" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">Smart Contract</a>
               </li>
               <li className="mb-3">
-                <a href="https://github.com/chrisstef/polyplace#the-project" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">The Project</a>
+                <a href="https://github.com/" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">The Project</a>
               </li>
               <li className="mb-3">
-                <a href="https://github.com/chrisstef/polyplace/blob/main/README.md#developers" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">Developers</a>
+                <a href="https://github.com/" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">Developers</a>
               </li>
             </ul>
           </div>
@@ -67,16 +67,16 @@ const Footer = () => {
           <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-base">RealIncom Inc. All Rights Reserved.</p>
           <div className="flex flex-row sm:mt-4">
             <div className={`${theme === 'light' ? 'filter invert' : ''} space-x-6`}>
-              <a target="_blank" href="https://github.com/chrisstef"  rel="noreferrer">
+              <a target="_blank" href="https://github.com/"  rel="noreferrer">
                 <Image src={images.github} objectFit="contain" className="cursor-pointer opacity-80 hover:opacity-100 hover:scale-105 transition duration-500" width={24} height={24} alt="github" />
               </a>
-              <a target="_blank" href="https://twitter.com/ChristosStefan4"  rel="noreferrer">
+              <a target="_blank" href="https://twitter.com/realincom"  rel="noreferrer">
                 <Image src={images.twitter} objectFit="contain" className="cursor-pointer opacity-80 hover:opacity-100 hover:scale-105 transition duration-500" width={24} height={24} alt="twitter" />
               </a>
-              <a target="_blank" href="https://t.me/kaieverdream"  rel="noreferrer">
+              <a target="_blank" href="https://t.me/realincom"  rel="noreferrer">
                 <Image src={images.telegram} objectFit="contain" className="cursor-pointer opacity-80 hover:opacity-100 hover:scale-105 transition duration-500" width={24} height={24} alt="telegram" />
               </a>
-              <a target="_blank" href="https://www.youtube.com/channel/UCtOqEoFDiyw0usiJHE5ll_Q"  rel="noreferrer">
+              <a target="_blank" href="https://www.youtube.com/channel/realincom"  rel="noreferrer">
                 <Image src={images.youtube} objectFit="contain" className="cursor-pointer opacity-80 hover:opacity-100 hover:scale-105 transition duration-500" width={24} height={24} alt="youtube" />
               </a>
             </div>
