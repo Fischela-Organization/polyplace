@@ -205,7 +205,7 @@ const AssetDetails = () => {
               App or Product Age: {nft.age}
             </p>
 
-            <div className="font-poppins dark:text-white text-nft-black-1 font-italic text-sm mt-3 p-3 border border-sky-500">
+            <div className="font-poppins rounded dark:text-white text-nft-black-1 font-italic text-sm mt-3 p-4 dark:bg-nft-black-3 rounded-xl">
               Vetted Listing This quality listing has been vetted by the
               RealIncom team or an broker(Elder) to ensure accuracy of the
               information provided. Our vetting team has reviewed this listing
@@ -218,7 +218,7 @@ const AssetDetails = () => {
               </ol>
             </div>
 
-            <div className="font-poppins dark:text-white text-nft-black-1 font-italic text-sm mt-3 p-3 border border-sky-500">
+            <div className="font-poppins dark:text-white text-nft-black-1 font-italic text-sm mt-3 p-3 dark:bg-nft-black-3 rounded-xl">
               Location: South Africa
             </div>
           </div>

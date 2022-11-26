@@ -21,6 +21,7 @@ const MenuItems = ({ isMobile, active, setActive, setIsOpen }: MenuItemsInterfac
       case 0: return '/';
       case 1: return '/listed-nfts';
       case 2: return '/my-nfts';
+      case 3: return '/dispute-lists';
       default:
         return ''
     }
@@ -28,7 +29,7 @@ const MenuItems = ({ isMobile, active, setActive, setIsOpen }: MenuItemsInterfac
 
   return (
     <ul className={`list-none flexCenter flex-row ${isMobile && 'flex-col h-full'}`}>
-      {['Explore NFTs', 'Listed NFTs', 'My NFTs'].map((item, i) => (
+      {['Explore NFTs', 'Listed NFTs', 'My NFTs', "Disputes"].map((item, i) => (
         <li
           key={i}
           onClick={() => {

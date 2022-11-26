@@ -15,6 +15,43 @@ const Home = () => {
   const [hideButtons, setHideButtons] = useState(false);
   const isLoading = false
   const [nfts, setNfts] = useState([{
+    image: "/creator1.png",
+    i: 1,
+    name: "Candy Crush Game",
+    price: "2 ETH",
+    owner: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a",
+    seller: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a"
+  }, {
+    image: "/creator2.png",
+    i: 1,
+    name: "Candy Crush Game",
+    price: "2 ETH",
+    owner: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a",
+    seller: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a"
+  },
+  {
+    image: "/creator3.png",
+    i: 1,
+    name: "Candy Crush Game",
+    price: "2 ETH",
+    owner: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a",
+    seller: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a"
+  }, {
+    image: "/creator4.png",
+    i: 1,
+    name: "Candy Crush Game",
+    price: "2 ETH",
+    owner: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a",
+    seller: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a"
+  }, {
+    image: "/creator8.png",
+    i: 1,
+    name: "Candy Crush Game",
+    price: "2 ETH",
+    owner: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a",
+    seller: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a"
+  },
+  {
     image: "/creator9.png",
     i: 1,
     name: "Candy Crush Game",
