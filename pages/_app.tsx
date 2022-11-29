@@ -17,7 +17,7 @@ import { AppProps } from 'next/app';
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  uri: "https://api.thegraph.com/subgraphs/name/norvirae/podship",
+  uri: "https://api.thegraph.com/subgraphs/name/norvirae/realincom-subgraph",
 });
 
 const MyApp = ({ Component, pageProps }: AppProps) => (

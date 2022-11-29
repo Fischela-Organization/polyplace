@@ -1,16 +1,17 @@
-import { MouseEventHandler } from "react";
+import { CSSProperties, MouseEventHandler } from "react";
 
 interface ButtonInterface{
-  btnName: string, classStyles: string, handleClick?: any, btnType?: any
+  btnName: string, classStyles: string, handleClick?: any, btnType?: any, isLoading?: boolean, style: CSSProperties
 }
 
-const Button = ({ btnName, classStyles, handleClick }: ButtonInterface) => (
+const Button = ({ style, btnName, classStyles, handleClick, isLoading }: ButtonInterface) => (
   <button
     type="button"
+    style={style}
     className={`nft-gradient text-sm minlg:text-lg py-2 px-6 minlg:px-8 font-poppins font-semibold text-white transform transition duration-500 hover:scale-105 ${classStyles}`}
     onClick={handleClick}
   >
-    {btnName}
+    {isLoading ?"loading..." : btnName}
   </button>
 );
 

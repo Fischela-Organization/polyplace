@@ -8,9 +8,12 @@ import { Loader, NFTCard, Banner, SearchBar } from '../components';
 import images from '../assets';
 import { shortenAddress } from '../utils/shortenAddress';
 import { useMoralis, useWeb3Contract } from 'react-moralis';
+import { useQuery } from '@apollo/client';
+import { fetchMyNft } from '../graphql/schema';
 
 const MyNFTs = () => {
   const { fetchMyNFTsOrListedNFTs, currentAccount }: { fetchMyNFTsOrListedNFTs: any, currentAccount: any } = { fetchMyNFTsOrListedNFTs: "", currentAccount: "" }
+  const { loading, data: pods } = useQuery(fetchMyNft);
   const [nfts, setNfts] = useState([{
     image: "/creator9.png",
     i: 1,
