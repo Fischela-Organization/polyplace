@@ -13,7 +13,7 @@ import { fetchMyNft } from '../graphql/schema';
 
 const MyNFTs = () => {
   const { fetchMyNFTsOrListedNFTs, currentAccount }: { fetchMyNFTsOrListedNFTs: any, currentAccount: any } = { fetchMyNFTsOrListedNFTs: "", currentAccount: "" }
-  const { loading, data: pods } = useQuery(fetchMyNft);
+  const { loading, data:digis } = useQuery(fetchMyNft);
   const [nfts, setNfts] = useState([{
     image: "/creator9.png",
     i: 1,
@@ -42,8 +42,8 @@ const MyNFTs = () => {
     //     setIsLoading(false);
     //   });
 
-    console.log(account, "Account")
-  }, []);
+    console.log(account, "Account", digis)
+  }, [digis]);
 
   // useEffect(() => {
   //   const sortedNfts = [...nfts];
