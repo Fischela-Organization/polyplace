@@ -15,7 +15,14 @@ import { nftAbi } from "../Artifacts/abi/abiManager";
 import { nftAddress } from "../Artifacts/contractAddress/contractManager";
 import { storeNFT } from "../utils/uploadNft";
 
+// let Blob: typeof globalThis extends {
+//   onmessage: any;
+//   Blob: infer T;
+// }
+
+
 const CreateNFT = () => {
+  
   const [fileUrl, setFileUrl] = useState(null);
   const [isLoad, setIsLoad] = useState(false);
   const [nftDetails, setNftDetails] = useState<{

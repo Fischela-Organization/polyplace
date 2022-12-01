@@ -21,6 +21,27 @@ export const fetchDigiSales = gql`
       id
       isOnSale
       digi {
+        id
+        title
+        metadataURI
+        isOnSale
+        description
+        worth
+        ownerAddress {
+          id
+        }
+      }
+    }
+  }
+`;
+
+export const fetchMyDigiSales = gql`
+  query getDigiSales($id: ID!) {
+    digiSales(where: {digi_: {ownerAddress: $id}}) {
+      id
+      isOnSale
+      digi {
+        id
         title
         metadataURI
         isOnSale

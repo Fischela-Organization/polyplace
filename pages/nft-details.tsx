@@ -14,13 +14,30 @@ import { shortenAddress } from "../utils/shortenAddress";
 import { Button, Loader, Modal } from "../components";
 import images from "../assets";
 import Link from "next/link";
-import { useMoralis } from "react-moralis";
+import { useMoralis, useWeb3Contract } from "react-moralis";
 import { fetchSingleDigi } from "../graphql/schema";
 import { useQuery } from "@apollo/client";
+import { auctionAbi } from "../Artifacts/abi/abiManager";
+import { auctionAddress } from "../Artifacts/contractAddress/contractManager";
+import { convertToWei } from "../utils/web3conversions";
 
 interface PaymentBodyCmp {
   nft: any;
   nftCurrency: any;
+  setAuctionDetails: Dispatch<
+    SetStateAction<{
+      tokenId: number;
+      endTime: string;
+      startTime: string;
+      reservedPrice: number;
+    }>
+  >;
+  auctionDetails: {
+    tokenId: number;
+    endTime: string;
+    startTime: string;
+    reservedPrice: number;
+  };
 }
 
 interface ButtonOptions {
@@ -49,11 +66,11 @@ const ButtonOptions = ({
   setPaymentModal,
 }: ButtonOptions) => {
   const router = useRouter();
-  useEffect(() => {
-    console.log("digi", digi);
-  }, [digi]);
+  // useEffect(() => {
+  //   console.log("digi", digi);
+  // }, [digi]);
 
-  if (digi && digi.ownerAddress.id.toLowerCase() == account) {
+  if (digi && digi.isOnSale && digi.ownerAddress.id.toLowerCase() == account) {
     return (
       <div className="flex flex-row sm:flex-col mt-10">
         <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
@@ -61,9 +78,7 @@ const ButtonOptions = ({
         </p>
       </div>
     );
-  }
-
-  if (digi && digi.isOnSale) {
+  } else if (digi && digi.isOnSale) {
     return (
       <div className="flex flex-row sm:flex-col mt-10">
         <Button
@@ -81,7 +96,7 @@ const ButtonOptions = ({
         />
       </div>
     );
-  } 
+  }
 
   return (
     <div className="flex flex-row sm:flex-col mt-10">
@@ -102,8 +117,14 @@ const ButtonOptions = ({
   );
 };
 
-const PaymentBodyCmpAuction = ({ nft, nftCurrency }: PaymentBodyCmp) => {
+const PaymentBodyCmpAuction = ({
+  nft,
+  nftCurrency,
+  auctionDetails,
+  setAuctionDetails,
+}: PaymentBodyCmp) => {
   let nftImages: any = images;
+  const router = useRouter();
 
   return (
     <div className="flex flex-col">
@@ -137,7 +158,6 @@ const PaymentBodyCmpAuction = ({ nft, nftCurrency }: PaymentBodyCmp) => {
         </div>
 
         {/* <div>
-          
           <div className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal">
             {nft.price} <span className="font-semibold">{nftCurrency}</span>
           </div>
@@ -151,13 +171,12 @@ const PaymentBodyCmpAuction = ({ nft, nftCurrency }: PaymentBodyCmp) => {
           </p>
           <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
             <input
-              // value={nftDetails.traffic}
               type="date"
               className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
               placeholder={"Reserved Price"}
-              // onChange={(e) =>
-              //   setNftDetails((old) => ({ ...old, traffic: e.target.value }))
-              // }
+              onChange={(e) =>
+                setAuctionDetails((old) => ({ ...old, endTime: e.target.value }))
+              }
             />
             <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
           </div>
@@ -168,13 +187,13 @@ const PaymentBodyCmpAuction = ({ nft, nftCurrency }: PaymentBodyCmp) => {
           </p>
           <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
             <input
-              // value={nftDetails.traffic}
+              value={auctionDetails.reservedPrice}
               type="text"
               className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
               placeholder={"Reserved Price"}
-              // onChange={(e) =>
-              //   setNftDetails((old) => ({ ...old, traffic: e.target.value }))
-              // }
+              onChange={(e) =>
+                setAuctionDetails((old) => ({ ...old, reservedPrice: Number(e.target.value) }))
+              }
             />
             <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
           </div>
@@ -287,13 +306,16 @@ const AssetDetails = () => {
 
   useEffect(() => {
     // disable body scroll when navbar is open
-    console.log(digi, router.query.id, "DIGI");
+    // console.log(digi, router.query.id, "DIGI");
     if (paymentModal || successModal) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "visible";
     }
   }, [paymentModal, successModal, digi]);
+
+  const { runContractFunction, data } = useWeb3Contract();
+
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -312,8 +334,11 @@ const AssetDetails = () => {
     //   tokenURI: nftImages[`nft${1}`],
     // });
 
-    setIsLoading(false);
-  }, [router.isReady]);
+    // setIsLoading(false);
+
+    // console.log(data, "DATA")
+
+  }, [router.isReady, data, isLoading]);
 
   const checkout = async () => {
     // await buyNft(nft);
@@ -322,7 +347,48 @@ const AssetDetails = () => {
     setSuccessModal(true);
   };
 
-  if (isLoading) return <Loader />;
+  const [auctionDetails, setAuctionDetails] = useState({
+    tokenId: parseInt(String(router.query.id)),
+    endTime: '',
+    startTime: 0,
+    reservedPrice: 0,
+  });
+
+
+
+  const startAuction = async () => {
+    try {
+      setIsLoading(true)
+      const options = {
+        abi: auctionAbi,
+        contractAddress: auctionAddress,
+        functionName: "startAuction",
+        params: {
+          tokenId: auctionDetails.tokenId,
+          startTime: Math.floor(Date.now() / 1000),
+          endTime: Math.floor(
+            new Date(auctionDetails.endTime).getTime() / 1000
+          ),
+          reservedPrice: convertToWei(auctionDetails.reservedPrice),
+        },
+      };
+
+      console.log("GOT IN", auctionDetails.tokenId,
+      Math.floor(Date.now() / 1000),
+      Math.floor(
+                 new Date(auctionDetails.endTime).getTime() / 1000
+               ),
+     convertToWei(auctionDetails.reservedPrice))
+      await runContractFunction({ params: options });
+      console.log("GOT OUT", auctionDetails.endTime)
+      setIsLoading(false)
+    } catch (err) {
+      console.log(err);
+      setIsLoading(false)
+    }
+  };
+
+  if (loading) return <Loader />;
   // let nftImages: any = images;
 
   return (
@@ -418,7 +484,7 @@ const AssetDetails = () => {
       {modalStatus.showBidModal && (
         <Modal
           header="Check Out"
-          body={<PaymentBodyCmp nft={nft} nftCurrency={nftCurrency} />}
+          body={<PaymentBodyCmp auctionDetails={auctionDetails} setAuctionDetails={setAuctionDetails} nft={nft} nftCurrency={nftCurrency} />}
           footer={
             <div className="flex flex-row sm:flex-col">
               <Button
@@ -444,14 +510,22 @@ const AssetDetails = () => {
       {modalStatus.showAuction && (
         <Modal
           header="Start Auction"
-          body={<PaymentBodyCmpAuction nft={nft} nftCurrency={nftCurrency} />}
+          body={
+            <PaymentBodyCmpAuction
+              auctionDetails={auctionDetails}
+              setAuctionDetails={setAuctionDetails}
+              nft={nft}
+              nftCurrency={nftCurrency}
+            />
+          }
           footer={
             <div className="flex flex-row sm:flex-col">
               <Button
-                btnName="Start Auction"
+                btnName={"Start Auction"}
+                isLoading={isLoading}
                 btnType="primary"
                 classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                handleClick={checkout}
+                handleClick={() => {startAuction()}}
               />
               <Button
                 btnName="Cancel"
