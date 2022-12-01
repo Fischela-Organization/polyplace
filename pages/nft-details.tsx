@@ -1,4 +1,10 @@
-import { useState, useEffect, useContext } from "react";
+import {
+  useState,
+  useEffect,
+  useContext,
+  SetStateAction,
+  Dispatch,
+} from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
@@ -8,11 +14,175 @@ import { shortenAddress } from "../utils/shortenAddress";
 import { Button, Loader, Modal } from "../components";
 import images from "../assets";
 import Link from "next/link";
+import { useMoralis } from "react-moralis";
+import { fetchSingleDigi } from "../graphql/schema";
+import { useQuery } from "@apollo/client";
 
 interface PaymentBodyCmp {
   nft: any;
   nftCurrency: any;
 }
+
+interface ButtonOptions {
+  account: string | null;
+  digi: any;
+  nftCurrency: string;
+  setPaymentModal: any;
+  modalStatus: {
+    showBidModal: boolean;
+    showAuction: boolean;
+  };
+  setModalStatus: Dispatch<
+    SetStateAction<{
+      showBidModal: boolean;
+      showAuction: boolean;
+    }>
+  >;
+}
+
+const ButtonOptions = ({
+  account,
+  modalStatus,
+  setModalStatus,
+  digi,
+  nftCurrency,
+  setPaymentModal,
+}: ButtonOptions) => {
+  const router = useRouter();
+  useEffect(() => {
+    console.log("digi", digi);
+  }, [digi]);
+
+  if (digi && digi.ownerAddress.id.toLowerCase() == account) {
+    return (
+      <div className="flex flex-row sm:flex-col mt-10">
+        <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
+          You own this Digital Asset
+        </p>
+      </div>
+    );
+  }
+
+  if (digi && digi.isOnSale) {
+    return (
+      <div className="flex flex-row sm:flex-col mt-10">
+        <Button
+          btnName={`Buy for ${digi ? digi.price : ""} ${nftCurrency}`}
+          btnType="primary"
+          classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+          handleClick={() =>
+            setModalStatus(
+              (old: { showBidModal: boolean; showAuction: boolean }) => ({
+                ...old,
+                showBidModal: true,
+              })
+            )
+          }
+        />
+      </div>
+    );
+  } 
+
+  return (
+    <div className="flex flex-row sm:flex-col mt-10">
+      <Button
+        btnName="List on RealIncom"
+        btnType="primary"
+        classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+        handleClick={() =>
+          setModalStatus(
+            (old: { showBidModal: boolean; showAuction: boolean }) => ({
+              ...old,
+              showAuction: true,
+            })
+          )
+        }
+      />
+    </div>
+  );
+};
+
+const PaymentBodyCmpAuction = ({ nft, nftCurrency }: PaymentBodyCmp) => {
+  let nftImages: any = images;
+
+  return (
+    <div className="flex flex-col">
+      <div className="flexBetween">
+        <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-base minlg:text-xl">
+          Item
+        </p>
+        <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-base minlg:text-xl">
+          Listing
+        </p>
+      </div>
+
+      <div className="flexBetweenStart my-5">
+        <div className="flex-1 flexStartCenter">
+          <div className="relative w-28 h-28">
+            <Image
+              alt=""
+              src={nft.image || nftImages[`creator${7}`]}
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
+          <div className="flexCenterStart flex-col ml-5">
+            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-sm minlg:text-xl">
+              {shortenAddress(nft.seller)}
+            </p>
+            <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal">
+              {nft.name}
+            </p>
+          </div>
+        </div>
+
+        {/* <div>
+          
+          <div className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal">
+            {nft.price} <span className="font-semibold">{nftCurrency}</span>
+          </div>
+        </div> */}
+      </div>
+
+      <div className="flexBetween flex-col mt-10">
+        <div className="ml-2 mt-10 w-full">
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
+            when do you want Auction to End?
+          </p>
+          <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
+            <input
+              // value={nftDetails.traffic}
+              type="date"
+              className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
+              placeholder={"Reserved Price"}
+              // onChange={(e) =>
+              //   setNftDetails((old) => ({ ...old, traffic: e.target.value }))
+              // }
+            />
+            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
+          </div>
+        </div>
+        <div className="mt-10 w-full">
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
+            How much is your Digital Asset worth?
+          </p>
+          <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
+            <input
+              // value={nftDetails.traffic}
+              type="text"
+              className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
+              placeholder={"Reserved Price"}
+              // onChange={(e) =>
+              //   setNftDetails((old) => ({ ...old, traffic: e.target.value }))
+              // }
+            />
+            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const PaymentBodyCmp = ({ nft, nftCurrency }: PaymentBodyCmp) => {
   let nftImages: any = images;
@@ -69,7 +239,11 @@ const PaymentBodyCmp = ({ nft, nftCurrency }: PaymentBodyCmp) => {
 
 const AssetDetails = () => {
   let nftImages: any = images;
-
+  let { account } = useMoralis();
+  const [modalStatus, setModalStatus] = useState({
+    showBidModal: false,
+    showAuction: false,
+  });
   const {
     nftCurrency,
     buyNft,
@@ -105,15 +279,21 @@ const AssetDetails = () => {
   const [successModal, setSuccessModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const {
+    loading,
+    data: digi,
+    error,
+  } = useQuery(fetchSingleDigi, { variables: { id: router.query.id } });
 
   useEffect(() => {
     // disable body scroll when navbar is open
+    console.log(digi, router.query.id, "DIGI");
     if (paymentModal || successModal) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "visible";
     }
-  }, [paymentModal, successModal]);
+  }, [paymentModal, successModal, digi]);
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -162,7 +342,7 @@ const AssetDetails = () => {
       <div className="flex-1 justify-start sm:px-4 p-12 sm:pb-4">
         <div className="flex flex-row sm:flex-col">
           <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl minlg:text-3xl">
-            {nft.name}
+            {digi && digi.digi.title}
           </h2>
         </div>
 
@@ -180,7 +360,7 @@ const AssetDetails = () => {
               />
             </div>
             <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-lg font-semibold">
-              {shortenAddress(nft.seller)}
+              {shortenAddress(digi ? digi.digi.ownerAddress.id : "0x...00")}
             </p>
           </div>
         </div>
@@ -193,12 +373,13 @@ const AssetDetails = () => {
           </div>
           <div className="mt-3">
             <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base">
-              {nft.description}
+              {digi ? digi.digi.description : "Loading... description"}
 
-                <Link href={"#"} legacyBehavior>
-                  <span className="checkout-link text-sm">Checkout the Product</span>
-                  
-                </Link>
+              <Link href={"#"} legacyBehavior>
+                <span className="checkout-link text-sm">
+                  Checkout the Product
+                </span>
+              </Link>
             </p>
 
             <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base mt-3">
@@ -221,43 +402,27 @@ const AssetDetails = () => {
             <div className="font-poppins dark:text-white text-nft-black-1 font-italic text-sm mt-3 p-3 dark:bg-nft-black-3 rounded-xl">
               Location: South Africa
             </div>
+
+            <ButtonOptions
+              modalStatus={modalStatus}
+              setModalStatus={setModalStatus}
+              account={account}
+              digi={digi ? digi.digi : null}
+              nftCurrency={nftCurrency}
+              setPaymentModal={setPaymentModal}
+            />
           </div>
-        </div>
-        <div className="flex flex-row sm:flex-col mt-10">
-          {currentAccount === nft.seller.toLowerCase() ? (
-            <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
-              You cannot buy your own NFT
-            </p>
-          ) : currentAccount === nft.owner.toLowerCase() ? (
-            <Button
-              btnName="List on Polyplace"
-              btnType="primary"
-              classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-              handleClick={() =>
-                router.push(
-                  `/resell-nft?id=${nft.tokenId}&tokenURI=${nft.tokenURI}`
-                )
-              }
-            />
-          ) : (
-            <Button
-              btnName={`Buy for ${nft.price} ${nftCurrency}`}
-              btnType="primary"
-              classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-              handleClick={() => setPaymentModal(true)}
-            />
-          )}
         </div>
       </div>
 
-      {paymentModal && (
+      {modalStatus.showBidModal && (
         <Modal
           header="Check Out"
           body={<PaymentBodyCmp nft={nft} nftCurrency={nftCurrency} />}
           footer={
             <div className="flex flex-row sm:flex-col">
               <Button
-                btnName="Checkout"
+                btnName="Place Bid"
                 btnType="primary"
                 classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
                 handleClick={checkout}
@@ -270,7 +435,35 @@ const AssetDetails = () => {
               />
             </div>
           }
-          handleClose={() => setPaymentModal(false)}
+          handleClose={() =>
+            setModalStatus((old) => ({ ...old, showBidModal: false }))
+          }
+        />
+      )}
+
+      {modalStatus.showAuction && (
+        <Modal
+          header="Start Auction"
+          body={<PaymentBodyCmpAuction nft={nft} nftCurrency={nftCurrency} />}
+          footer={
+            <div className="flex flex-row sm:flex-col">
+              <Button
+                btnName="Start Auction"
+                btnType="primary"
+                classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+                handleClick={checkout}
+              />
+              <Button
+                btnName="Cancel"
+                btnType="outline"
+                classStyles="rounded-xl"
+                handleClick={() => setPaymentModal(false)}
+              />
+            </div>
+          }
+          handleClose={() =>
+            setModalStatus((old) => ({ ...old, showAuction: false }))
+          }
         />
       )}
 

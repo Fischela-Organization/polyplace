@@ -42,7 +42,7 @@ const StatusReader = ({type = "gold"}) => {
   }
 };
 
-const NFTCard = ({ nft, onProfilePage }: NftCardInterface) => {
+const AuctionCard = ({ nft, onProfilePage }: NftCardInterface) => {
   const nftCurrency = "MATIC";
 
   return (
@@ -60,17 +60,17 @@ const NFTCard = ({ nft, onProfilePage }: NftCardInterface) => {
           />
         </div>
         <div className="mt-3 flex flex-col">
-          <StatusReader type={"gold"} />
+          {nft.isOnSale && <StatusReader type={"gold"} />}
           <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-sm minlg:text-xl">
             {shortenName(nft.title)}
           </p>
           <div className="flexBetween mt-1 minlg:mt-3 flex-row xs:flex-col xs:items-start xs:mt-3">
             <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xs minlg:text-lg">
-              {nft.worth > 100000 ? shortenPrice(nft.worth) : nft.worth}{" "}
+              {nft.worth > 100000 ? shortenPrice(nft.digi.worth) : nft.digi.worth}{" "}
               <span className="normal">{nftCurrency}</span>
             </p>
             <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-lg">
-              {shortenAddress(onProfilePage ? nft.owner : nft.seller)}
+              {shortenAddress(onProfilePage ? nft.digi.owner : nft.seller)}
             </p>
           </div>
 
@@ -80,7 +80,7 @@ const NFTCard = ({ nft, onProfilePage }: NftCardInterface) => {
               <span className="normal">Title</span>
             </p>
             <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-lg">
-              {shortenAddress(nft.title)}
+              {shortenAddress(nft.digi.title)}
             </p>
           </div>
 
@@ -90,7 +90,7 @@ const NFTCard = ({ nft, onProfilePage }: NftCardInterface) => {
               <span className="normal">Description</span>
             </p>
             <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-lg">
-              {shortenAddress(nft.description)}
+              {shortenAddress(nft.digi.description)}
             </p>
           </div>
         </div>
@@ -99,4 +99,4 @@ const NFTCard = ({ nft, onProfilePage }: NftCardInterface) => {
   );
 };
 
-export default NFTCard;
+export default AuctionCard;

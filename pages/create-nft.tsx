@@ -7,7 +7,7 @@ import { useTheme } from "next-themes";
 
 import withTransition from "../components/withTransition";
 
-import { Button, Input, Loader } from "../components";
+import { Button, Input, Loader, Modal } from "../components";
 
 import images from "../assets";
 import { useMoralis, useWeb3Contract } from "react-moralis";
@@ -21,56 +21,68 @@ const CreateNFT = () => {
   const [nftDetails, setNftDetails] = useState<{
     imageFile: Blob | globalThis.File;
     docFile: Blob | globalThis.File;
-    name: string;
+    title: string;
     description: string;
-    price: string;
+    productAge: number;
+    revenue: string;
+    expenses: string;
+    traffic: string;
+    location: string;
+    productLink: string;
+   
   }>({
     imageFile: new Blob(),
     docFile: new Blob(),
-    name: "",
+    title: "",
     description: "",
-    price: "",
+    productAge: 0,
+    revenue: "",
+    expenses: "",
+    traffic: "",
+    location: "",
+    productLink: ""
   });
   const { theme } = useTheme();
   const { signup, isAuthenticated, user, account } = useMoralis();
   const { data, error, runContractFunction, isFetching, isLoading } =
-    useWeb3Contract({
-      abi: nftAbi,
-      contractAddress: nftAddress,
-      functionName: "mintNFT",
-      params: {
-        _title: "0x2Cdb125180A315afd2926850b56616AdADBa840B",
-        _description: "Hello",
-        _digiURI: "ipfs://",
-      },
-    });
+    useWeb3Contract();
   const { isLoadingNFT } = { isLoadingNFT: "" };
   const mintNft = async (
     image: Blob | globalThis.File,
     docFile: Blob | globalThis.File,
-    name: string,
-    description: string
+    title: string,
+    description: string,
+
   ) => {
     try {
       setIsLoad(true);
-      const nftResource = await storeNFT(image, docFile, name, description);
-      console.log(nftResource, "HOLE");
+      const nftResource = await storeNFT(image, docFile, title, description);
+      console.log(nftResource?.url, "HOLE");
 
       const params = {
-        _title: nftDetails.name,
-        _description: nftDetails.description,
-        _digiURI: nftResource?.url,
-      };
-
-      runContractFunction({
         abi: nftAbi,
         contractAddress: nftAddress,
         functionName: "mintNFT",
-        params,
-      }).then
+        params: {
+          _title: nftDetails.title,
+          _description: nftDetails.description,
+          _digiURI: nftResource?.url,
+          _productAge: nftDetails.productAge,
+          _revenue: nftDetails.revenue,
+          _expenses:nftDetails.expenses,
+          _traffic: nftDetails.traffic,
+          _location: nftDetails.location,
+          _productLink: nftDetails.productLink,
+        },
+      };
+
+      await runContractFunction({
+       params
+      });
       console.log(data, account, "DATA");
       setIsLoad(false);
     } catch (err) {
+      console.log(err)
       setIsLoad(false);
     }
   };
@@ -124,16 +136,29 @@ const CreateNFT = () => {
     [isDragActive, isDragAccept, isDragReject]
   );
 
-  if (isLoadingNFT) {
-    return (
-      <div className="flexStart min-h-screen">
-        <Loader />
-      </div>
-    );
-  }
+  // if (isLoad) {
+  //   return (
+  //     <div className="flexStart min-h-screen">
+  //       <Loader />
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex justify-center sm:px-4 p-12">
+      {isLoad && (
+        <Modal
+          header="Uploading & minting NFT..."
+          body={
+            <div className="flexCenter flex-col text-center">
+              <div className="relative w-52 h-52">
+                <Loader />
+              </div>
+            </div>
+          }
+          handleClose={() => setIsLoad(false)}
+        />
+      )}
       <div className="w-3/5 md:w-full">
         <h1 className="font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">
           Create a new NFT
@@ -229,12 +254,12 @@ const CreateNFT = () => {
           </p>
           <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
             <input
-              value={nftDetails.name}
+              value={nftDetails.title}
               type="text"
               className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
               placeholder={"Nft Name"}
               onChange={(e) =>
-                setNftDetails((old) => ({ ...old, name: e.target.value }))
+                setNftDetails((old) => ({ ...old, title: e.target.value }))
               }
             />
             <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
@@ -243,7 +268,7 @@ const CreateNFT = () => {
 
         <div className="mt-10 w-full">
           <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
-            Name
+            Description
           </p>
           <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
             <textarea
@@ -263,33 +288,115 @@ const CreateNFT = () => {
             <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
           </div>
         </div>
-        {/* <Input
-          inputValue={formInput.name}
-          inputType="input"
-          title="Name"
-          placeholder="NFT name"
-          handleChange={(e: any) =>
-            setFormInput({ ...formInput, name: e.target.value })
-          }
-        /> */}
-        {/* <Input
-          inputType="textarea"
-          inputValue={formInput.name}
-          title="Description"
-          placeholder="NFT Description"
-          handleChange={(e: any) =>
-            setFormInput({ ...formInput, description: e.target.value })
-          }
-        /> */}
-        {/* <Input
-          inputType="number"
-          title="Price"
-          inputValue={formInput.name}
-          placeholder="NFT Price"
-          handleChange={(e: any) =>
-            setFormInput({ ...formInput, price: e.target.value })
-          }
-        /> */}
+
+
+        <div className="mt-10 w-full">
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
+            What year did you start this product?
+          </p>
+          <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
+          <input
+              type="date"
+              className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
+              placeholder={"Product Age"}
+              onChange={(e) =>
+                setNftDetails((old) => ({ ...old, productAge: Number(e.target.value) }))
+              }
+            />
+            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
+          </div>
+        </div>
+
+        <div className="mt-10 w-full">
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
+            Monthly Revenue (Zero(0) if none)
+          </p>
+          <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
+          <input
+              value={nftDetails.revenue}
+              type="text"
+              className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
+              placeholder={"Revenue"}
+              onChange={(e) =>
+                setNftDetails((old) => ({ ...old, revenue: e.target.value }))
+              }
+            />
+            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
+          </div>
+        </div>
+
+        <div className="mt-10 w-full">
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
+            Monthly Expenses (Zero(0) if none)
+          </p>
+          <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
+          <input
+              value={nftDetails.expenses}
+              type="text"
+              className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
+              placeholder={"Expenses"}
+              onChange={(e) =>
+                setNftDetails((old) => ({ ...old, expenses: e.target.value }))
+              }
+            />
+            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
+          </div>
+        </div>
+
+        <div className="mt-10 w-full">
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
+            Traffic
+          </p>
+          <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
+          <input
+              value={nftDetails.traffic}
+              type="text"
+              className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
+              placeholder={"Traffic"}
+              onChange={(e) =>
+                setNftDetails((old) => ({ ...old, traffic: e.target.value }))
+              }
+            />
+            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
+          </div>
+        </div>
+
+        <div className="mt-10 w-full">
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
+            Location
+          </p>
+          <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
+          <input
+              value={nftDetails.location}
+              type="text"
+              className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
+              placeholder={"Location"}
+              onChange={(e) =>
+                setNftDetails((old) => ({ ...old, location: e.target.value }))
+              }
+            />
+            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
+          </div>
+        </div>
+
+        <div className="mt-10 w-full">
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
+            Product Link
+          </p>
+          <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
+          <input
+              value={nftDetails.productLink}
+              type="text"
+              className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
+              placeholder={"Product Link"}
+              onChange={(e) =>
+                setNftDetails((old) => ({ ...old, productLink: e.target.value }))
+              }
+            />
+            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
+          </div>
+        </div>
+
         <div className="mt-7 w-full flex justify-end">
           <Button
             btnName="Create NFT"
@@ -299,7 +406,7 @@ const CreateNFT = () => {
               mintNft(
                 nftDetails.imageFile,
                 nftDetails.docFile,
-                nftDetails.name,
+                nftDetails.title,
                 nftDetails.description
               )
             }

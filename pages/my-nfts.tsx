@@ -13,7 +13,6 @@ import { fetchMyNft } from '../graphql/schema';
 
 const MyNFTs = () => {
   const { fetchMyNFTsOrListedNFTs, currentAccount }: { fetchMyNFTsOrListedNFTs: any, currentAccount: any } = { fetchMyNFTsOrListedNFTs: "", currentAccount: "" }
-  const { loading, data:digis } = useQuery(fetchMyNft);
   const [nfts, setNfts] = useState([{
     image: "/creator9.png",
     i: 1,
@@ -34,6 +33,9 @@ const MyNFTs = () => {
 
   const { account } = useMoralis()
 
+  const { loading, data:digis, refetch } = useQuery(fetchMyNft, {variables: {account}});
+
+
   useEffect(() => {
     // fetchMyNFTsOrListedNFTs()
     //   .then((items: any) => {
@@ -41,7 +43,7 @@ const MyNFTs = () => {
     //     setNftsCopy(items);
     //     setIsLoading(false);
     //   });
-
+    refetch({account})
     console.log(account, "Account", digis)
   }, [digis]);
 
@@ -64,7 +66,7 @@ const MyNFTs = () => {
   //   }
   // }, [activeSelect]);
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flexStart min-h-screen">
         <Loader />
@@ -126,13 +128,13 @@ const MyNFTs = () => {
             />
           </div>
           <div className="mt-3 w-full flex flex-wrap">
-            {nfts.map((nft: any) => (
+            {digis ? digis.digis.map((nft: any) => (
               <NFTCard
-                key={nft.token}
+                key={nft.id}
                 nft={nft}
                 onProfilePage
               />
-            ))}
+            )): <Loader/>}
           </div>
         </div>
       )}

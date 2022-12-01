@@ -145,3 +145,25 @@
   color: #1474d5;
   display: block;
 }
+
+/* NFT CARD */
+.status-container{
+  position: absolute;
+  /* top: 10%; */
+  right: 14%; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.cart-on-sale{
+  color: silver;
+}
+
+.status-text{
+  font-size: .5rem;
+}
+
+.nft-card{
+  position: relative;
+}

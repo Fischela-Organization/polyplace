@@ -1,7 +1,7 @@
 import { CSSProperties, MouseEventHandler } from "react";
 
 interface ButtonInterface{
-  btnName: string, classStyles: string, handleClick?: any, btnType?: any, isLoading?: boolean, style: CSSProperties
+  btnName: string, classStyles: string, handleClick?: any, btnType?: any, isLoading?: boolean, style?: CSSProperties
 }
 
 const Button = ({ style, btnName, classStyles, handleClick, isLoading }: ButtonInterface) => (
