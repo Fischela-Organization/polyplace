@@ -52,7 +52,7 @@ const CreateNFT = () => {
   const { theme } = useTheme();
   const { signup, isAuthenticated, user, account } = useMoralis();
   const { data, error, runContractFunction, isFetching, isLoading } =
-    useWeb3Contract();
+    useWeb3Contract({});
   const { isLoadingNFT } = { isLoadingNFT: "" };
   const mintNft = async (
     image: Blob | globalThis.File,

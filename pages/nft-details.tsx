@@ -20,8 +20,9 @@ import { useQuery } from "@apollo/client";
 import { auctionAbi } from "../Artifacts/abi/abiManager";
 import { auctionAddress } from "../Artifacts/contractAddress/contractManager";
 import { convertToWei } from "../utils/web3conversions";
+import { ethers } from "ethers";
 
-interface PaymentBodyCmp {
+interface PaymentBodyCmpAuction {
   nft: any;
   nftCurrency: any;
   setAuctionDetails: Dispatch<
@@ -37,6 +38,19 @@ interface PaymentBodyCmp {
     endTime: string;
     startTime: string;
     reservedPrice: number;
+  };
+}
+
+interface PaymentBodyCmp {
+  nft: any;
+  nftCurrency: any;
+  setBidDetails: Dispatch<
+    SetStateAction<{
+     bidAmount: number
+    }>
+  >;
+  bidDetails: {
+    bidAmount: number
   };
 }
 
@@ -122,7 +136,7 @@ const PaymentBodyCmpAuction = ({
   nftCurrency,
   auctionDetails,
   setAuctionDetails,
-}: PaymentBodyCmp) => {
+}: PaymentBodyCmpAuction) => {
   let nftImages: any = images;
   const router = useRouter();
 
@@ -175,7 +189,10 @@ const PaymentBodyCmpAuction = ({
               className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
               placeholder={"Reserved Price"}
               onChange={(e) =>
-                setAuctionDetails((old) => ({ ...old, endTime: e.target.value }))
+                setAuctionDetails((old) => ({
+                  ...old,
+                  endTime: e.target.value,
+                }))
               }
             />
             <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
@@ -188,11 +205,14 @@ const PaymentBodyCmpAuction = ({
           <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
             <input
               value={auctionDetails.reservedPrice}
-              type="text"
+              type="number"
               className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
               placeholder={"Reserved Price"}
               onChange={(e) =>
-                setAuctionDetails((old) => ({ ...old, reservedPrice: Number(e.target.value) }))
+                setAuctionDetails((old) => ({
+                  ...old,
+                  reservedPrice: Number(e.target.value),
+                }))
               }
             />
             <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
@@ -203,7 +223,7 @@ const PaymentBodyCmpAuction = ({
   );
 };
 
-const PaymentBodyCmp = ({ nft, nftCurrency }: PaymentBodyCmp) => {
+const PaymentBodyCmp = ({ nft, nftCurrency, bidDetails, setBidDetails }: PaymentBodyCmp) => {
   let nftImages: any = images;
 
   return (
@@ -213,7 +233,7 @@ const PaymentBodyCmp = ({ nft, nftCurrency }: PaymentBodyCmp) => {
           Item
         </p>
         <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-base minlg:text-xl">
-          Subtotal
+          Digital Asset Value
         </p>
       </div>
 
@@ -246,10 +266,24 @@ const PaymentBodyCmp = ({ nft, nftCurrency }: PaymentBodyCmp) => {
 
       <div className="flexBetween mt-10">
         <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-base minlg:text-xl">
-          Total
+          Bid
         </p>
         <p className="font-poppins dark:text-white text-nft-black-1 text-base minlg:text-xl font-normal">
-          {nft.price} <span className="font-semibold">{nftCurrency}</span>
+        <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
+            <input
+              value={bidDetails.bidAmount}
+              type="number"
+              className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
+              placeholder={"Reserved Price"}
+              onChange={(e) =>
+                setBidDetails((old) => ({
+                  ...old,
+                  bidAmount: Number(e.target.value),
+                }))
+              }
+            />
+            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
+          </div>
         </p>
       </div>
     </div>
@@ -259,6 +293,7 @@ const PaymentBodyCmp = ({ nft, nftCurrency }: PaymentBodyCmp) => {
 const AssetDetails = () => {
   let nftImages: any = images;
   let { account } = useMoralis();
+
   const [modalStatus, setModalStatus] = useState({
     showBidModal: false,
     showAuction: false,
@@ -314,8 +349,8 @@ const AssetDetails = () => {
     }
   }, [paymentModal, successModal, digi]);
 
-  const { runContractFunction, data } = useWeb3Contract();
-
+  const { runContractFunction, data } = useWeb3Contract({});
+  const placeBidContract = useWeb3Contract({});
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -337,7 +372,6 @@ const AssetDetails = () => {
     // setIsLoading(false);
 
     // console.log(data, "DATA")
-
   }, [router.isReady, data, isLoading]);
 
   const checkout = async () => {
@@ -349,16 +383,18 @@ const AssetDetails = () => {
 
   const [auctionDetails, setAuctionDetails] = useState({
     tokenId: parseInt(String(router.query.id)),
-    endTime: '',
-    startTime: 0,
+    endTime: "",
+    startTime: "",
     reservedPrice: 0,
   });
 
-
+  const [bidDetails, setBidDetails] = useState({
+    bidAmount: 0
+  });
 
   const startAuction = async () => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const options = {
         abi: auctionAbi,
         contractAddress: auctionAddress,
@@ -373,20 +409,47 @@ const AssetDetails = () => {
         },
       };
 
-      console.log("GOT IN", auctionDetails.tokenId,
-      Math.floor(Date.now() / 1000),
-      Math.floor(
-                 new Date(auctionDetails.endTime).getTime() / 1000
-               ),
-     convertToWei(auctionDetails.reservedPrice))
+      console.log(
+        "GOT IN",
+        auctionDetails.tokenId,
+        Math.floor(Date.now() / 1000),
+        Math.floor(new Date(auctionDetails.endTime).getTime() / 1000),
+        convertToWei(auctionDetails.reservedPrice)
+      );
       await runContractFunction({ params: options });
-      console.log("GOT OUT", auctionDetails.endTime)
-      setIsLoading(false)
+      console.log("GOT OUT", auctionDetails.endTime);
+      setIsLoading(false);
     } catch (err) {
       console.log(err);
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
+
+  const placeBid = async () => {
+    try{
+      
+      setIsLoading(true)
+      const options = {
+        abi: auctionAbi,
+        contractAddress: auctionAddress,
+        functionName: "placeBid",
+        params: {
+          auctionId: parseInt(String(router.query.auctionId), 16)
+        },
+        value: ethers.utils.parseUnits(String(bidDetails.bidAmount), "wei")
+      };
+
+      console.log("BID PLACED", bidDetails.bidAmount, router.query.auctionId)
+      await placeBidContract.runContractFunction({params: options})
+      setIsLoading(false)
+
+    }
+
+    catch(err){
+      console.log(err)
+      setIsLoading(false)
+    }
+  }
 
   if (loading) return <Loader />;
   // let nftImages: any = images;
@@ -483,15 +546,23 @@ const AssetDetails = () => {
 
       {modalStatus.showBidModal && (
         <Modal
-          header="Check Out"
-          body={<PaymentBodyCmp auctionDetails={auctionDetails} setAuctionDetails={setAuctionDetails} nft={nft} nftCurrency={nftCurrency} />}
+          header="Place a Bid"
+          body={
+            <PaymentBodyCmp
+              bidDetails={bidDetails}
+              setBidDetails={setBidDetails}
+              nft={nft}
+              nftCurrency={nftCurrency}
+            />
+          }
           footer={
             <div className="flex flex-row sm:flex-col">
               <Button
+                isLoading={isLoading}
                 btnName="Place Bid"
                 btnType="primary"
                 classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                handleClick={checkout}
+                handleClick={() => placeBid()}
               />
               <Button
                 btnName="Cancel"
@@ -525,7 +596,9 @@ const AssetDetails = () => {
                 isLoading={isLoading}
                 btnType="primary"
                 classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                handleClick={() => {startAuction()}}
+                handleClick={() => {
+                  startAuction();
+                }}
               />
               <Button
                 btnName="Cancel"

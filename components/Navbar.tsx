@@ -45,7 +45,7 @@ const MenuItems = ({
         isMobile && "flex-col h-full"
       }`}
     >
-      {["Explore NFTs", "Listed NFTs", "My NFTs", "Disputes"].map((item, i) => (
+      {["Explore Digis", "Listed Digis", "My Digis", "Disputes"].map((item, i) => (
         <li
           key={i}
           onClick={() => {
@@ -118,13 +118,13 @@ const ButtonGroup = ({
 const checkActive = (active: any, setActive: any, router: any) => {
   switch (router.pathname) {
     case "/":
-      if (active !== "Explore NFTs") setActive("Explore NFTs");
+      if (active !== "Explore Digis") setActive("Explore Digis");
       break;
     case "/listed-nfts":
-      if (active !== "Listed NFTs") setActive("Listed NFTs");
+      if (active !== "Listed Digis") setActive("Listed Digis");
       break;
     case "/my-nfts":
-      if (active !== "My NFTs") setActive("My NFTs");
+      if (active !== "My Digis") setActive("My Digis");
       break;
     case "/create-nft":
       setActive("");
@@ -138,7 +138,7 @@ const checkActive = (active: any, setActive: any, router: any) => {
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const router = useRouter();
-  const [active, setActive] = useState("Explore NFTs");
+  const [active, setActive] = useState("Explore Digis");
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {

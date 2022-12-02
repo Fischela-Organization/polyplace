@@ -20,6 +20,7 @@ export const fetchDigiSales = gql`
     digiSales {
       id
       isOnSale
+      auctionId
       digi {
         id
         title
@@ -40,6 +41,7 @@ export const fetchMyDigiSales = gql`
     digiSales(where: {digi_: {ownerAddress: $id}}) {
       id
       isOnSale
+      auctionId
       digi {
         id
         title

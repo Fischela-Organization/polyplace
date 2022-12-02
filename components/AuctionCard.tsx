@@ -46,7 +46,7 @@ const AuctionCard = ({ nft, onProfilePage }: NftCardInterface) => {
   const nftCurrency = "MATIC";
 
   return (
-    <Link href={{ pathname: "/nft-details", query: { id: nft.digi.id, auctionId: nft.id } }}>
+    <Link href={{ pathname: "/nft-details", query: { id: nft.digi.id, auctionId: nft.auctionId } }}>
       <div className="nft-card flex-1 min-w-327 max-w-max xs:max-w-none sm:w-full sm:min-w-256 minmd:min-w-256 minlg:min-w-327 dark:bg-nft-black-3 bg-white rounded-2xl p-4 m-4 minlg:m-8 sm:my-2 sm:mx-2 cursor-pointer shadow-md hover:shadow-lg duration-500">
         <div className="relative w-full h-52 sm:h-36 minmd:h-60 minlg:h-300 rounded-2xl overflow-hidden">
           <Image
