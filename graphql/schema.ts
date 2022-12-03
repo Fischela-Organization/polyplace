@@ -17,10 +17,11 @@ export const fetchMyNft = gql`
 
 export const fetchDigiSales = gql`
   query getDigiSales {
-    digiSales {
+    digiSales(where:{isOnSale: true}) {
       id
       isOnSale
       auctionId
+      amount
       intergrityConfirmed
       digi {
         id
@@ -45,7 +46,7 @@ export const fetchDigiSales = gql`
 
 export const fetchMyDigiSales = gql`
   query getDigiSales($id: ID!) {
-    digiSales(where: { digi_: { ownerAddress: $id } }) {
+    digiSales(where: {isOnSale: true, digi_: { ownerAddress: $id } }) {
       id
       isOnSale
       auctionId
@@ -68,22 +69,23 @@ export const fetchSingleDigi = gql`
   query digi($id: ID!) {
     digi(id: $id) {
       id
+      title
       metadataURI
-      created
       isOnSale
+      description
+      worth
       ownerAddress {
         id
       }
-      creator {
-        id
-      }
-      title
-      description
-      worth
+      productAge
+      monthlyExpenses
+      monthlyRevenue
+      monthlyTraffic
+      location
+      productLink
     }
   }
 `;
-
 
 export const fetchSingleDigiSale = gql`
   query digi($id: ID!) {
@@ -91,6 +93,7 @@ export const fetchSingleDigiSale = gql`
       id
       isOnSale
       auctionId
+      amount
       intergrityConfirmed
       digi {
         id

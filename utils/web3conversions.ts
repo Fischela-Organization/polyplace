@@ -1,9 +1,15 @@
-import {ethers} from 'ethers'
+import { ethers } from "ethers";
 
 export const convertFromWei = (num: number | string) => {
-    return ethers.utils.parseEther(String(num))
-}
+  if (num) {
+    return ethers.utils.formatEther(String(num));
+  }
+  return ""
+};
 
 export const convertToWei = (num: number | string) => {
-    return ethers.utils.parseUnits(String(num))
-}
+    if(num){
+        return ethers.utils.parseUnits(String(num));
+    }
+    return ""
+};

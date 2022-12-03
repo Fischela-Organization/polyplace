@@ -19,7 +19,7 @@ import { fetchSingleDigiSale } from "../../graphql/schema";
 import { useQuery } from "@apollo/client";
 import { auctionAbi } from "../../Artifacts/abi/abiManager";
 import { auctionAddress } from "../../Artifacts/contractAddress/contractManager";
-import { convertToWei } from "../../utils/web3conversions";
+import { convertFromWei, convertToWei } from "../../utils/web3conversions";
 import { ethers } from "ethers";
 import { StatusReader } from "../../components/AuctionCard";
 import { fetchDocument, fetchImage } from "../../utils/fetchMetaData";
@@ -47,6 +47,7 @@ interface PaymentBodyCmpAuction {
 interface PaymentBodyCmp {
   nft: any;
   nftCurrency: any;
+  nftImage: any;
   setBidDetails: Dispatch<
     SetStateAction<{
       bidAmount: number;
@@ -90,20 +91,16 @@ const ButtonOptions = ({
   if (
     digiSale &&
     digiSale.isOnSale &&
-    digiSale.ownerAddress.id.toLowerCase() == account
+    digiSale.digi.ownerAddress.id.toLowerCase() == account
   ) {
     return (
-      <div className="flex flex-row sm:flex-col mt-10">
+      <div className="flex flex-row justify-center gap-5 sm:flex-col mt-10">
         <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
           You own this Digital Asset
         </p>
-      </div>
-    );
-  } else if (digiSale && digiSale.isOnSale) {
-    return (
-      <div className="flex flex-row sm:flex-col mt-10">
+
         <Button
-          btnName={`Buy for ${digiSale ? digiSale.price : ""} ${nftCurrency}`}
+          btnName={`Cancel Auction`}
           btnType="primary"
           classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
           handleClick={() =>
@@ -117,25 +114,50 @@ const ButtonOptions = ({
         />
       </div>
     );
+  } else if (digiSale && digiSale.isOnSale) {
+    return (
+      <div className="flex flex-row sm:flex-col mt-10">
+        <Button
+          btnName={`Place Bid ${
+            digiSale ? convertFromWei(digiSale.amount) : ""
+          } ${nftCurrency}`}
+          btnType="primary"
+          classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+          handleClick={() =>
+            setModalStatus(
+              (old: { showBidModal: boolean; showAuction: boolean }) => ({
+                ...old,
+                showBidModal: true,
+              })
+            )
+          }
+        />
+      </div>
+    );
+  } else if (digiSale.digi.ownerAddress.id.toLowerCase() == account) {
+    return (
+      <div
+        style={{ justifyContent: "center", alignItems: "center" }}
+        className="flex flex-row justify-center align-center sm:flex-col mt-10"
+      >
+        <Button
+          btnName="List on RealIncom"
+          btnType="primary"
+          classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+          handleClick={() =>
+            setModalStatus(
+              (old: { showBidModal: boolean; showAuction: boolean }) => ({
+                ...old,
+                showAuction: true,
+              })
+            )
+          }
+        />
+      </div>
+    );
   }
 
-  return (
-    <div className="flex flex-row sm:flex-col mt-10">
-      <Button
-        btnName="List on RealIncom"
-        btnType="primary"
-        classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-        handleClick={() =>
-          setModalStatus(
-            (old: { showBidModal: boolean; showAuction: boolean }) => ({
-              ...old,
-              showAuction: true,
-            })
-          )
-        }
-      />
-    </div>
-  );
+  return null;
 };
 
 const PaymentBodyCmpAuction = ({
@@ -231,6 +253,7 @@ const PaymentBodyCmpAuction = ({
 };
 
 const PaymentBodyCmp = ({
+  nftImage,
   nft,
   nftCurrency,
   bidDetails,
@@ -252,26 +275,21 @@ const PaymentBodyCmp = ({
       <div className="flexBetweenStart my-5">
         <div className="flex-1 flexStartCenter">
           <div className="relative w-28 h-28">
-            <Image
-              alt=""
-              src={nft.image || nftImages[`creator${7}`]}
-              layout="fill"
-              objectFit="cover"
-            />
+            <Image alt="" src={nftImage} layout="fill" objectFit="cover" />
           </div>
           <div className="flexCenterStart flex-col ml-5">
             <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-sm minlg:text-xl">
               {shortenAddress(nft.seller)}
             </p>
             <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal">
-              {nft.name}
+              {nft.title}
             </p>
           </div>
         </div>
 
         <div>
           <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal">
-            {nft.price} <span className="font-semibold">{nftCurrency}</span>
+            {convertFromWei(nft.amount)} <span className="font-semibold">{nftCurrency}</span>
           </p>
         </div>
       </div>
@@ -376,7 +394,7 @@ const AssetDetails = () => {
             setNftImageDoc((old) => ({ ...old, image: "" }));
           });
 
-          fetchDocument(digiSale.digiSale.digi.metadataURI)
+        fetchDocument(digiSale.digiSale.digi.metadataURI)
           .then((res) => {
             setNftImageDoc((old) => ({ ...old, doc: res }));
           })
@@ -400,6 +418,12 @@ const AssetDetails = () => {
 
   useEffect(() => {
     if (!router.isReady) return;
+
+    // if (digiSale) {
+    //   setBidDetails((old) => ({
+    //     ...old, bidAmount: digiSale.digiSale.amount
+    //   }))
+    // }
 
     // setNft({
     //   image: nftImages[`creator${8}`],
@@ -471,20 +495,21 @@ const AssetDetails = () => {
     }
   };
 
-  const placeBid = async () => {
+  const placeBid = async (digiSale: any) => {
     try {
       setIsLoading(true);
+      console.log(digiSale.auctionId,"BID PLACED", digiSale, ethers.utils.parseUnits(String(bidDetails.bidAmount), "wei").toString());
+
       const options = {
         abi: auctionAbi,
         contractAddress: auctionAddress,
         functionName: "placeBid",
         params: {
-          auctionId: parseInt(String(router.query.auctionId), 16),
+          auctionId: digiSale.auctionId,
         },
         value: ethers.utils.parseUnits(String(bidDetails.bidAmount), "wei"),
       };
 
-      console.log("BID PLACED", bidDetails.bidAmount, router.query.auctionId);
       await placeBidContract.runContractFunction({ params: options });
       setIsLoading(false);
     } catch (err) {
@@ -517,18 +542,19 @@ const AssetDetails = () => {
         <div className="doc-side font-poppins rounded dark:text-white text-nft-black-1 font-italic text-sm mt-3 p-4 dark:bg-nft-black-3 rounded-xl relative w-557 minmd:w-2/3 minmd:h-2/3 sm:w-full sm:h-300 h-557 ">
           <div>
             <AiOutlineFilePdf style={{ fontSize: "12rem" }} />
-            <a>
-            <Link target="_blank" href={digiSale && nftImageDoc.doc != ""
-                ? nftImageDoc.doc
-                : "#"}>Click to view</Link>
-                </a>
+            <a style={{ color: "blue", textDecoration: "underline" }}>
+              <Link
+                target="_blank"
+                href={digiSale && nftImageDoc.doc != "" ? nftImageDoc.doc : "#"}
+              >
+                Click to view
+              </Link>
+            </a>
             <iframe src={nftImageDoc.doc} title="description"></iframe>
-
-
           </div>
           <ul className="font-poppins flex flex-col gap-10 rounded dark:text-white text-nft-black-1 font-italic text-sm mt-3 p-4 dark:bg-nft-black-3 rounded-xl">
-            <li style={{display: "flex", fontSize: "1.2rem"}}>
-              <AiFillWarning style={{color: "red", fontSize: "2rem"}}/>
+            <li style={{ display: "flex", fontSize: "1.2rem" }}>
+              <AiFillWarning style={{ color: "red", fontSize: "2rem" }} />
               Please Do not release funds unless proper ownership has been
               transferred and confirmed by you or a third party
             </li>
@@ -591,9 +617,13 @@ const AssetDetails = () => {
         </div>
 
         <div className="mt-10 flex flex-col">
-          <div className="w-full border-b dark:border-nft-black-1 border-nft-gray-1 flex flex-row">
+          <div className="flex flex-col gap-2 w-full border-b dark:border-nft-black-1 border-nft-gray-1 flex flex-row">
             <p className="font-poppins dark:text-white text-nft-black-1 font-medium text-base mb-2">
               Details
+            </p>
+            <p className="font-poppins font-bold dark:text-white text-nft-black-1 font-normal text-base mt-3">
+              Listing Price:{" "}
+              {digiSale ? convertFromWei(digiSale.digiSale.amount) : 0} MATIC
             </p>
           </div>
           <div className="mt-3">
@@ -613,14 +643,20 @@ const AssetDetails = () => {
               App or Product Age:{" "}
               {isNaN(
                 new Date(
-                  Number(digiSale.digiSale.digi.productAge)
+                  Number(
+                    digiSale ? digiSale.digiSale.digi.productAge : Date.now()
+                  )
                 ).getFullYear()
               )
                 ? "Not Provided"
                 : "Since " +
                   String(
                     new Date(
-                      Number(digiSale.digiSale.digi.productAge)
+                      Number(
+                        digiSale
+                          ? digiSale.digiSale.digi.productAge
+                          : Date.now()
+                      )
                     ).getFullYear()
                   )}
             </p>
@@ -686,7 +722,7 @@ const AssetDetails = () => {
               modalStatus={modalStatus}
               setModalStatus={setModalStatus}
               account={account}
-              digiSale={digiSale ? digiSale.digiSale.digi : null}
+              digiSale={digiSale ? digiSale.digiSale : null}
               nftCurrency={nftCurrency}
               setPaymentModal={setPaymentModal}
             />
@@ -699,9 +735,10 @@ const AssetDetails = () => {
           header="Place a Bid"
           body={
             <PaymentBodyCmp
+              nftImage={nftImageDoc.image}
               bidDetails={bidDetails}
               setBidDetails={setBidDetails}
-              nft={nft}
+              nft={digiSale ? digiSale.digiSale : null}
               nftCurrency={nftCurrency}
             />
           }
@@ -712,7 +749,7 @@ const AssetDetails = () => {
                 btnName="Place Bid"
                 btnType="primary"
                 classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                handleClick={() => placeBid()}
+                handleClick={() => placeBid(digiSale ? digiSale.digiSale : null)}
               />
               <Button
                 btnName="Cancel"

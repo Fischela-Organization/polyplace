@@ -6,7 +6,10 @@ import { shortenAddress } from "../utils/shortenAddress";
 import { shortenPrice } from "../utils/shortenPrice";
 import { shortenName } from "../utils/shortenName";
 import { BsFillCartCheckFill } from "react-icons/bs";
-
+import { ethers } from "ethers";
+import {convertFromWei} from '../utils/web3conversions'
+import { useEffect, useState } from "react";
+import { fetchImage } from "../utils/fetchMetaData";
 interface NftCardInterface {
   nft?: any;
   onProfilePage?: any;
@@ -44,6 +47,22 @@ export const StatusReader = ({type = "gold"}) => {
 
 const AuctionCard = ({ nft, onProfilePage }: NftCardInterface) => {
   const nftCurrency = "MATIC";
+  const [nftImage, setNftImage] = useState({image: ""})
+
+  useEffect(() => {
+    if (nft) {
+      if (nftImage.image == "") {
+        fetchImage(nft.digi.metadataURI)
+          .then((res) => {
+            setNftImage((old) => ({ ...old, image: res }));
+          })
+          .catch((err) => {
+            console.log(err);
+            setNftImage((old) => ({ ...old, image: "" }));
+          });
+    }
+  }
+  }, [nft])
 
   return (
     <Link href={{ pathname: `/auction-details/${nft.id}`}}>
@@ -52,7 +71,7 @@ const AuctionCard = ({ nft, onProfilePage }: NftCardInterface) => {
           <Image
             className="flex justify-center items-center hover:scale-110 transition-all duration-500"
             src={
-              "https://ipfs.io/ipfs/bafybeif4sapffkfskpzcbdcy23m3dssof6q745kqroiyavkna67t4i6ofq/smokez.jpg"
+              nftImage.image
             }
             layout="fill"
             objectFit="cover"
@@ -66,7 +85,7 @@ const AuctionCard = ({ nft, onProfilePage }: NftCardInterface) => {
           </p>
           <div className="flexBetween mt-1 minlg:mt-3 flex-row xs:flex-col xs:items-start xs:mt-3">
             <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xs minlg:text-lg">
-              {nft.worth > 100000 ? shortenPrice(nft.digi.worth) : nft.digi.worth}{" "}
+              {convertFromWei(nft.amount).toString()} {" "}
               <span className="normal">{nftCurrency}</span>
             </p>
             <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-lg">
@@ -80,7 +99,7 @@ const AuctionCard = ({ nft, onProfilePage }: NftCardInterface) => {
               <span className="normal">Title</span>
             </p>
             <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-lg">
-              {shortenAddress(nft.digi.title)}
+              {nft.digi.title}
             </p>
           </div>
 

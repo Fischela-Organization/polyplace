@@ -5,10 +5,10 @@ import { useTheme } from 'next-themes';
 import images from '../assets';
 
 interface ModalInterface{
-  header?:any, body?:any, footer?:any, handleClose?:any
+  header?:any, body?:any, footer?:any, handleClose?:any, nftImage?: any
 }
 
-const Modal = ({ header, body, footer, handleClose }: ModalInterface) => {
+const Modal = ({ header, body, footer, handleClose, nftImage }: ModalInterface) => {
   const modalRef: React.Ref<any> = useRef(null);
   const { theme } = useTheme();
 

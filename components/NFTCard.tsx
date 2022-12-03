@@ -6,6 +6,8 @@ import { shortenAddress } from "../utils/shortenAddress";
 import { shortenPrice } from "../utils/shortenPrice";
 import { shortenName } from "../utils/shortenName";
 import { BsFillCartCheckFill } from "react-icons/bs";
+import { useEffect, useState } from "react";
+import { fetchImage } from "../utils/fetchMetaData";
 
 interface NftCardInterface {
   nft?: any;
@@ -14,7 +16,7 @@ interface NftCardInterface {
 
 let nftImages = images;
 
-const StatusReader = ({type = "gold"}) => {
+const StatusReader = ({ type = "gold" }) => {
   switch (type) {
     case "silver":
       return (
@@ -26,8 +28,11 @@ const StatusReader = ({type = "gold"}) => {
 
     case "gold":
       return (
-        <div style={{color: "gold"}} className="status-container">
-          <BsFillCartCheckFill style={{color: "gold"}} className="cart-on-sale" />
+        <div style={{ color: "gold" }} className="status-container">
+          <BsFillCartCheckFill
+            style={{ color: "gold" }}
+            className="cart-on-sale"
+          />
           <h6 className="status-text">GOLD</h6>
         </div>
       );
@@ -44,6 +49,22 @@ const StatusReader = ({type = "gold"}) => {
 
 const NFTCard = ({ nft, onProfilePage }: NftCardInterface) => {
   const nftCurrency = "MATIC";
+  const [nftImage, setNftImage] = useState({image: ""})
+
+  useEffect(() => {
+    if (nft) {
+      if (nftImage.image == "") {
+        fetchImage(nft.metadataURI)
+          .then((res) => {
+            setNftImage((old) => ({ ...old, image: res }));
+          })
+          .catch((err) => {
+            console.log(err);
+            setNftImage((old) => ({ ...old, image: "" }));
+          });
+    }
+  }
+  }, [nft])
 
   return (
     <Link href={{ pathname: `/nft-details/${nft.id}` }}>
@@ -52,7 +73,7 @@ const NFTCard = ({ nft, onProfilePage }: NftCardInterface) => {
           <Image
             className="flex justify-center items-center hover:scale-110 transition-all duration-500"
             src={
-              "https://ipfs.io/ipfs/bafybeif4sapffkfskpzcbdcy23m3dssof6q745kqroiyavkna67t4i6ofq/smokez.jpg"
+              nftImage.image
             }
             layout="fill"
             objectFit="cover"
@@ -60,17 +81,18 @@ const NFTCard = ({ nft, onProfilePage }: NftCardInterface) => {
           />
         </div>
         <div className="mt-3 flex flex-col">
-          <StatusReader type={"gold"} />
+          {/* <StatusReader type={"gold"} /> */}
           <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-sm minlg:text-xl">
             {shortenName(nft.title)}
           </p>
           <div className="flexBetween mt-1 minlg:mt-3 flex-row xs:flex-col xs:items-start xs:mt-3">
+            <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-lg">
+              NET WORTH
+            </p>
+
             <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xs minlg:text-lg">
               {nft.worth > 100000 ? shortenPrice(nft.worth) : nft.worth}{" "}
               <span className="normal">{nftCurrency}</span>
-            </p>
-            <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-lg">
-              {shortenAddress(onProfilePage ? nft.owner : nft.seller)}
             </p>
           </div>
 
@@ -80,7 +102,7 @@ const NFTCard = ({ nft, onProfilePage }: NftCardInterface) => {
               <span className="normal">Title</span>
             </p>
             <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-lg">
-              {shortenAddress(nft.title)}
+              {nft.title}
             </p>
           </div>
 
