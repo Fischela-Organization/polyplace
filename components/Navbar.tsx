@@ -98,7 +98,7 @@ const ButtonGroup = ({
           setActive("");
           setIsOpen(false);
 
-          router.push("/create-nft");
+          router.push("/createNft");
         }}
       />
       <ConnectButton />
@@ -126,7 +126,7 @@ const checkActive = (active: any, setActive: any, router: any) => {
     case "/my-nfts":
       if (active !== "My Digis") setActive("My Digis");
       break;
-    case "/create-nft":
+    case "/createNft":
       setActive("");
       break;
 
