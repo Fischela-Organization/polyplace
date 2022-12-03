@@ -24,7 +24,7 @@ export async function storeNFT(image: Blob | globalThis.File |undefined, docFile
     const nftstorage = new NFTStorage({ token: NFT_STORAGE_KEY });
 
     // call client.store, passing in the image & metadata
-    return nftstorage.store({
+    return nftstorage.store<{image: any, name: any, description: any, docFile: any}>({
       image,
       name,
       description,

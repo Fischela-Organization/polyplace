@@ -36,13 +36,13 @@ const Footer = () => {
             <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl mb-10">RealIncom</h2>
             <ul className="font-poppins text-nft-black-1 dark:text-white">
               <li className="mb-3">
-                <a href="https://mumbai.polygonscan.com/" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">Smart Contract</a>
+                <a href="https://mumbai.polygonscan.com/address/0xB5c2b379d7C397B617B91367D2e8396274B4ebC8#readContract" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">Smart Contract</a>
               </li>
               <li className="mb-3">
-                <a href="https://github.com/" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">The Project</a>
+                <a href="https://github.com/Fischela-Organization/" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">The Project</a>
               </li>
               <li className="mb-3">
-                <a href="https://github.com/" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">Developers</a>
+                <a href="https://github.com/NorVirae" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">Developers</a>
               </li>
             </ul>
           </div>
@@ -55,9 +55,7 @@ const Footer = () => {
               <li className="mb-3">
                 <a href="https://mumbai.polygonscan.com/" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">Mumbai Explorer</a>
               </li>
-              <li className="mb-3">
-                <a href="https://mumbaifaucet.com/" target="_blank" className="font-poppins dark:text-white text-nft-black-1 font-normal text-base cursor-pointer dark:hover:text-nft-gray-1 hover:text-nft-black-1 my-3 transition duration-300" rel="noreferrer">Faucet</a>
-              </li>
+              
             </ul>
           </div>
         </div>
