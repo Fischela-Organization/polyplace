@@ -287,7 +287,7 @@ const Home = () => {
                 pageRangeDisplayed={5}
                 pageCount={pageCount}
                 previousLabel="< previous"
-                renderOnZeroPageCount={null}
+                // renderOnZeroPageCount={null}
               />
             </div>
           </>

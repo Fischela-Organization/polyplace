@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useContext } from "react";
 
 import { useRouter } from "next/router";
-import { useDropzone } from "react-dropzone";
+import { FileWithPath, useDropzone } from "react-dropzone";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 
@@ -26,8 +26,8 @@ const CreateNFT = () => {
   const [fileUrl, setFileUrl] = useState(null);
   const [isLoad, setIsLoad] = useState(false);
   const [nftDetails, setNftDetails] = useState<{
-    imageFile: Blob | globalThis.File;
-    docFile: Blob | globalThis.File;
+    imageFile: any;
+    docFile: any;
     title: string;
     description: string;
     productAge: string;
@@ -38,7 +38,7 @@ const CreateNFT = () => {
     productLink: string;
    
   }>({
-    imageFile: new Blob(),
+    imageFile: '',
     docFile: new Blob(),
     title: "",
     description: "",
@@ -56,8 +56,8 @@ const CreateNFT = () => {
     useWeb3Contract({});
   const { isLoadingNFT } = { isLoadingNFT: "" };
   const mintNft = async (
-    image: Blob | globalThis.File,
-    docFile: Blob | globalThis.File,
+    image: FileWithPath ,
+    docFile: FileWithPath,
     title: string,
     description: string,
 
