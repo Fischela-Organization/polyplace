@@ -1,6 +1,6 @@
 export const nftAddress = "0xd54765ccB13FDeb047276E2F85AF75B99680Ba23"
 
-export const auctionAddress = "0xDCC3713d5743d13d41C2a1Bf550188A635E7790f"
+export const auctionAddress = "0xe9a8Cc3C284FF35b502b54492d2BbE625402b188"
 
 export const villageSquare = "0xb7CD2e4889aa8CC288D971aeb82F107594095dbd"
 

@@ -496,8 +496,10 @@ const AssetDetails = () => {
 
         <div className="doc-side font-poppins rounded dark:text-white text-nft-black-1 font-italic text-sm mt-3 p-4 dark:bg-nft-black-3 rounded-xl relative w-557 minmd:w-2/3 minmd:h-2/3 sm:w-full sm:h-300 h-557 ">
           <div>
+          <h2 style={{color: "#1498D5"}}>{digi? digi.title: null} {" "} Blue Paper</h2>
+
             <AiOutlineFilePdf style={{ fontSize: "12rem" }} />
-            <a style={{ color: "blue", textDecoration: "underline" }}>
+            <a style={{ color: "#1498D5", textDecoration: "underline" }}>
               <Link
                 target="_blank"
                 href={digi && nftImageDoc.doc != "" ? nftImageDoc.doc : "#"}

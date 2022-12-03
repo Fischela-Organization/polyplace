@@ -44,6 +44,7 @@
     "nft.storage": "^7.0.0",
     "npm": "^9.1.2",
     "react": "18.2.0",
+    "react-countdown": "^2.3.5",
     "react-dom": "18.2.0",
     "react-drag-drop-files": "^2.3.7",
     "react-dropzone": "12.0.4",

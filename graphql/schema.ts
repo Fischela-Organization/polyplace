@@ -94,6 +94,9 @@ export const fetchSingleDigiSale = gql`
       isOnSale
       auctionId
       amount
+      startTime
+      endTime
+      auctionResulted
       intergrityConfirmed
       digi {
         id

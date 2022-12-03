@@ -24,6 +24,9 @@ import { ethers } from "ethers";
 import { StatusReader } from "../../components/AuctionCard";
 import { fetchDocument, fetchImage } from "../../utils/fetchMetaData";
 import { AiFillWarning, AiOutlineFilePdf } from "react-icons/ai";
+import Countdown from "react-countdown";
+
+import { AnyMxRecord } from "dns";
 
 interface PaymentBodyCmpAuction {
   nft: any;
@@ -60,9 +63,12 @@ interface PaymentBodyCmp {
 
 interface ButtonOptions {
   account: string | null;
-  digiSale: any;
+  digiSal: any;
   nftCurrency: string;
   setPaymentModal: any;
+  cancelAuction: (digiSale: any) => Promise<void>;
+  resultAuction: (digiSale: any) => Promise<void>;
+  releaseFunds: (digiSale: any) => Promise<void>;
   modalStatus: {
     showBidModal: boolean;
     showAuction: boolean;
@@ -77,9 +83,12 @@ interface ButtonOptions {
 
 const ButtonOptions = ({
   account,
+  cancelAuction,
+  releaseFunds,
+  resultAuction,
   modalStatus,
   setModalStatus,
-  digiSale,
+  digiSal,
   nftCurrency,
   setPaymentModal,
 }: ButtonOptions) => {
@@ -88,38 +97,47 @@ const ButtonOptions = ({
   //   console.log("digi", digi);
   // }, [digi]);
 
-  if (
-    digiSale &&
-    digiSale.isOnSale &&
-    digiSale.digi.ownerAddress.id.toLowerCase() == account
-  ) {
-    return (
-      <div className="flex flex-row justify-center gap-5 sm:flex-col mt-10">
+  return (
+    <div className="flex flex-row justify-center gap-5 sm:flex-col mt-10">
+      {digiSal.isOnSale && digiSal.digi.ownerAddress.id == account ? (
         <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
           You own this Digital Asset
         </p>
+      ) : null}
 
+      {digiSal.isOnSale && digiSal.digi.ownerAddress.id == account ? (
         <Button
           btnName={`Cancel Auction`}
           btnType="primary"
           classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-          handleClick={() =>
-            setModalStatus(
-              (old: { showBidModal: boolean; showAuction: boolean }) => ({
-                ...old,
-                showBidModal: true,
-              })
-            )
-          }
+          handleClick={() => cancelAuction(digiSal)}
         />
-      </div>
-    );
-  } else if (digiSale && digiSale.isOnSale) {
-    return (
-      <div className="flex flex-row sm:flex-col mt-10">
+      ) : null}
+      {console.log(digiSal.auctionResulted, "resulty")}
+      {!digiSal.isOnSale && digiSal.auctionResulted && (
+        <Button
+          btnName={`Release Funds`}
+          btnType="primary"
+          classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+          handleClick={() => releaseFunds(digiSal)}
+        />
+      )}
+
+      {digiSal.isOnSale &&
+        !digiSal.auctionResulted &&
+        digiSal.digi.ownerAddress.id == account && (
+          <Button
+            btnName={`Result Auction`}
+            btnType="primary"
+            classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+            handleClick={() => resultAuction(digiSal)}
+          />
+        )}
+
+      {digiSal.isOnSale && digiSal.digi.ownerAddress.id != account && (
         <Button
           btnName={`Place Bid ${
-            digiSale ? convertFromWei(digiSale.amount) : ""
+            digiSal ? convertFromWei(digiSal.amount) : ""
           } ${nftCurrency}`}
           btnType="primary"
           classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
@@ -132,32 +150,9 @@ const ButtonOptions = ({
             )
           }
         />
-      </div>
-    );
-  } else if (digiSale.digi.ownerAddress.id.toLowerCase() == account) {
-    return (
-      <div
-        style={{ justifyContent: "center", alignItems: "center" }}
-        className="flex flex-row justify-center align-center sm:flex-col mt-10"
-      >
-        <Button
-          btnName="List on RealIncom"
-          btnType="primary"
-          classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-          handleClick={() =>
-            setModalStatus(
-              (old: { showBidModal: boolean; showAuction: boolean }) => ({
-                ...old,
-                showAuction: true,
-              })
-            )
-          }
-        />
-      </div>
-    );
-  }
-
-  return null;
+      )}
+    </div>
+  );
 };
 
 const PaymentBodyCmpAuction = ({
@@ -289,7 +284,8 @@ const PaymentBodyCmp = ({
 
         <div>
           <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal">
-            {convertFromWei(nft.amount)} <span className="font-semibold">{nftCurrency}</span>
+            {convertFromWei(nft.amount)}{" "}
+            <span className="font-semibold">{nftCurrency}</span>
           </p>
         </div>
       </div>
@@ -346,12 +342,12 @@ const AssetDetails = () => {
     isLoadingNFT: false,
   };
 
-  let vettedListingText = `Vetted Listing; This quality listing has been vetted by the
+  let vettedListingText = `Vetted Listing [GOLD]; This quality listing has been vetted by the
                 RealIncom team or an broker(Elder) to ensure accuracy of the
                 information provided. Our vetting team has reviewed this listing
                 and verified: Revenue`;
 
-  let notVettedListingText = `This Listing hasn't been vetted yet: This quality listing hasn't been vetted by the
+  let notVettedListingText = `This Listing hasn't been vetted yet [SILVER]: This quality listing hasn't been vetted by the
                 RealIncom team or an broker(Elder) to ensure accuracy of the
                 information provided. Our vetting team has not reviewed this listing
                 and verified: Revenue`;
@@ -498,16 +494,114 @@ const AssetDetails = () => {
   const placeBid = async (digiSale: any) => {
     try {
       setIsLoading(true);
-      console.log(digiSale.auctionId,"BID PLACED", digiSale, ethers.utils.parseUnits(String(bidDetails.bidAmount), "wei").toString());
+      console.log(
+        digiSale.auctionId,
+        "BID PLACED",
+        digiSale,
+        ethers.utils.parseEther(String(bidDetails.bidAmount)).toString(),
+        "HIE",
+        bidDetails.bidAmount.toString()
+      );
 
       const options = {
         abi: auctionAbi,
         contractAddress: auctionAddress,
         functionName: "placeBid",
         params: {
-          auctionId: digiSale.auctionId,
+          _auctionId: digiSale.auctionId,
         },
-        value: ethers.utils.parseUnits(String(bidDetails.bidAmount), "wei"),
+        msgValue: ethers.utils
+          .parseEther(bidDetails.bidAmount.toString())
+          .toString(),
+      };
+
+      await placeBidContract.runContractFunction({ params: options });
+      setIsLoading(false);
+    } catch (err) {
+      console.log(err);
+      setIsLoading(false);
+    }
+  };
+
+  const resultAuction = async (digiSale: any) => {
+    try {
+      setIsLoading(true);
+      console.log(
+        digiSale.auctionId,
+        "BID PLACED",
+        digiSale,
+        ethers.utils.parseEther(String(bidDetails.bidAmount)).toString(),
+        "HIE",
+        bidDetails.bidAmount.toString()
+      );
+
+      const options = {
+        abi: auctionAbi,
+        contractAddress: auctionAddress,
+        functionName: "resultAuction",
+        params: {
+          _auctionId: digiSale.auctionId,
+        },
+        
+      };
+
+      await placeBidContract.runContractFunction({ params: options });
+      setIsLoading(false);
+    } catch (err) {
+      console.log(err);
+      setIsLoading(false);
+    }
+  };
+
+  const releaseFunds = async (digiSale: any) => {
+    try {
+      setIsLoading(true);
+      console.log(
+        digiSale.auctionId,
+        "BID PLACED",
+        digiSale,
+        ethers.utils.parseEther(String(bidDetails.bidAmount)).toString(),
+        "HIE",
+        bidDetails.bidAmount.toString()
+      );
+
+      const options = {
+        abi: auctionAbi,
+        contractAddress: auctionAddress,
+        functionName: "confirmResults",
+        params: {
+          _auctionId: digiSale.auctionId,
+        },
+        
+      };
+
+      await placeBidContract.runContractFunction({ params: options });
+      setIsLoading(false);
+    } catch (err) {
+      console.log(err);
+      setIsLoading(false);
+    }
+  };
+
+  const cancelAuction = async (digiSale: any) => {
+    try {
+      setIsLoading(true);
+      console.log(
+        digiSale.auctionId,
+        "BID PLACED",
+        digiSale,
+        ethers.utils.parseEther(String(bidDetails.bidAmount)).toString(),
+        "HIE",
+        bidDetails.bidAmount.toString()
+      );
+
+      const options = {
+        abi: auctionAbi,
+        contractAddress: auctionAddress,
+        functionName: "cancelAuction",
+        params: {
+          _auctionId: digiSale.auctionId,
+        },
       };
 
       await placeBidContract.runContractFunction({ params: options });
@@ -541,13 +635,16 @@ const AssetDetails = () => {
 
         <div className="doc-side font-poppins rounded dark:text-white text-nft-black-1 font-italic text-sm mt-3 p-4 dark:bg-nft-black-3 rounded-xl relative w-557 minmd:w-2/3 minmd:h-2/3 sm:w-full sm:h-300 h-557 ">
           <div>
+            <h2 style={{ color: "#1498D5" }}>
+              {digiSale ? digiSale.digiSale.title : null} Blue Paper
+            </h2>
             <AiOutlineFilePdf style={{ fontSize: "12rem" }} />
-            <a style={{ color: "blue", textDecoration: "underline" }}>
+            <a style={{ color: "#1498D5", textDecoration: "underline" }}>
               <Link
                 target="_blank"
                 href={digiSale && nftImageDoc.doc != "" ? nftImageDoc.doc : "#"}
               >
-                Click to view
+                Click to view Blue Paper
               </Link>
             </a>
             <iframe src={nftImageDoc.doc} title="description"></iframe>
@@ -618,28 +715,45 @@ const AssetDetails = () => {
 
         <div className="mt-10 flex flex-col">
           <div className="flex flex-col gap-2 w-full border-b dark:border-nft-black-1 border-nft-gray-1 flex flex-row">
+            <div className="font-poppins dark:text-white text-nft-black-1 font-medium text-base mb-2">
+              <Countdown
+                date={
+                  digiSale
+                    ? Number(digiSale.digiSale.endTime) * 1000
+                    : Date.now()
+                }
+              />{" "}
+              ON AUCTION
+            </div>
             <p className="font-poppins dark:text-white text-nft-black-1 font-medium text-base mb-2">
               Details
             </p>
-            <p className="font-poppins font-bold dark:text-white text-nft-black-1 font-normal text-base mt-3">
+            <div className="font-poppins font-bold dark:text-white text-nft-black-1 font-normal text-base mt-3">
               Listing Price:{" "}
               {digiSale ? convertFromWei(digiSale.digiSale.amount) : 0} MATIC
-            </p>
+            </div>
           </div>
           <div className="mt-3">
-            <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base">
+            <div className="font-poppins dark:text-white text-nft-black-1 font-normal text-base">
               {digiSale
                 ? digiSale.digiSale.digi.description
                 : "Loading... description"}
 
-              <Link href={"#"} legacyBehavior>
+              <Link
+                href={
+                  digiSale
+                    ? "https://" + digiSale.digiSale.digi.productLink
+                    : "#"
+                }
+                legacyBehavior
+              >
                 <span className="checkout-link text-sm">
                   Checkout the Product
                 </span>
               </Link>
-            </p>
+            </div>
 
-            <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base mt-3">
+            <div className="font-poppins dark:text-white text-nft-black-1 font-normal text-base mt-3">
               App or Product Age:{" "}
               {isNaN(
                 new Date(
@@ -659,7 +773,7 @@ const AssetDetails = () => {
                       )
                     ).getFullYear()
                   )}
-            </p>
+            </div>
 
             <div className="font-poppins rounded dark:text-white text-nft-black-1 font-italic text-sm mt-3 p-4 dark:bg-nft-black-3 rounded-xl">
               {digiSale
@@ -719,10 +833,13 @@ const AssetDetails = () => {
             </div>
 
             <ButtonOptions
+              cancelAuction={cancelAuction}
+              resultAuction={resultAuction}
+              releaseFunds={releaseFunds}
               modalStatus={modalStatus}
               setModalStatus={setModalStatus}
               account={account}
-              digiSale={digiSale ? digiSale.digiSale : null}
+              digiSal={digiSale ? digiSale.digiSale : null}
               nftCurrency={nftCurrency}
               setPaymentModal={setPaymentModal}
             />
@@ -749,7 +866,9 @@ const AssetDetails = () => {
                 btnName="Place Bid"
                 btnType="primary"
                 classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                handleClick={() => placeBid(digiSale ? digiSale.digiSale : null)}
+                handleClick={() =>
+                  placeBid(digiSale ? digiSale.digiSale : null)
+                }
               />
               <Button
                 btnName="Cancel"
