@@ -38,7 +38,7 @@ const CreateNFT = () => {
    
   }>({
     imageFile: '',
-    docFile: new Blob(),
+    docFile: '',
     title: "",
     description: "",
     productAge: '',
