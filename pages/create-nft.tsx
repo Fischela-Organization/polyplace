@@ -30,7 +30,7 @@ const CreateNFT = () => {
     docFile: Blob | globalThis.File;
     title: string;
     description: string;
-    productAge: number;
+    productAge: string;
     revenue: string;
     expenses: string;
     traffic: string;
@@ -42,13 +42,14 @@ const CreateNFT = () => {
     docFile: new Blob(),
     title: "",
     description: "",
-    productAge: 0,
+    productAge: '',
     revenue: "",
     expenses: "",
     traffic: "",
     location: "",
     productLink: ""
   });
+
   const { theme } = useTheme();
   const { signup, isAuthenticated, user, account } = useMoralis();
   const { data, error, runContractFunction, isFetching, isLoading } =
@@ -66,6 +67,7 @@ const CreateNFT = () => {
       const nftResource = await storeNFT(image, docFile, title, description);
       console.log(nftResource?.url, "HOLE");
 
+      console.log(nftDetails)
       const params = {
         abi: nftAbi,
         contractAddress: nftAddress,
@@ -74,14 +76,27 @@ const CreateNFT = () => {
           _title: nftDetails.title,
           _description: nftDetails.description,
           _digiURI: nftResource?.url,
-          _productAge: nftDetails.productAge,
-          _revenue: nftDetails.revenue,
-          _expenses:nftDetails.expenses,
-          _traffic: nftDetails.traffic,
-          _location: nftDetails.location,
-          _productLink: nftDetails.productLink,
+          productAge: new Date(nftDetails.productAge).getTime(),
+          monthlyRevenue: nftDetails.revenue,
+          monthlyExpenses:nftDetails.expenses,
+          monthlyTraffic: nftDetails.traffic,
+          location: nftDetails.location,
+          productLink: nftDetails.productLink,
         },
       };
+
+      
+      console.log({
+        _title: nftDetails.title,
+        _description: nftDetails.description,
+        _digiURI: nftResource?.url,
+        productAge: new Date(nftDetails.productAge).getTime(),
+        monthlyRevenue: nftDetails.revenue,
+        monthlyExpenses:nftDetails.expenses,
+        monthlyTraffic: nftDetails.traffic,
+        location: nftDetails.location,
+        productLink: nftDetails.productLink,
+      })
 
       await runContractFunction({
        params
@@ -112,7 +127,7 @@ const CreateNFT = () => {
       }
     }
 
-    console.log(acceptedFile, nftDetails, "FILE");
+    // console.log(acceptedFile, nftDetails, "FILE");
   }, []);
 
   const {
@@ -289,7 +304,7 @@ const CreateNFT = () => {
                   ...old,
                   description: e.target.value,
                 }));
-                console.log(nftDetails, "HIPI");
+                // console.log(nftDetails, "HIPI");
               }}
             ></textarea>
             <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
@@ -307,7 +322,7 @@ const CreateNFT = () => {
               className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
               placeholder={"Product Age"}
               onChange={(e) =>
-                setNftDetails((old) => ({ ...old, productAge: Number(e.target.value) }))
+                setNftDetails((old) => ({ ...old, productAge: e.target.value }))
               }
             />
             <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>
@@ -316,12 +331,12 @@ const CreateNFT = () => {
 
         <div className="mt-10 w-full">
           <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
-            Monthly Revenue (Zero(0) if none)
+            $Monthly Revenue (Zero(0) if none)
           </p>
           <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
           <input
               value={nftDetails.revenue}
-              type="text"
+              type="number"
               className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
               placeholder={"Revenue"}
               onChange={(e) =>
@@ -334,12 +349,12 @@ const CreateNFT = () => {
 
         <div className="mt-10 w-full">
           <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
-            Monthly Expenses (Zero(0) if none)
+            $Monthly Expenses (Zero(0) if none)
           </p>
           <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
           <input
               value={nftDetails.expenses}
-              type="text"
+              type="number"
               className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
               placeholder={"Expenses"}
               onChange={(e) =>
@@ -357,7 +372,7 @@ const CreateNFT = () => {
           <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
           <input
               value={nftDetails.traffic}
-              type="text"
+              type="number"
               className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
               placeholder={"Traffic"}
               onChange={(e) =>

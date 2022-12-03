@@ -1,8 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit'
+import nftReducer from './reducers/nftReducer'
 
 export const store = configureStore({
   reducer: {
-    
+    nft: nftReducer
   },
 })
 

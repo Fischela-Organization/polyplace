@@ -21,6 +21,7 @@ export const fetchDigiSales = gql`
       id
       isOnSale
       auctionId
+      intergrityConfirmed
       digi {
         id
         title
@@ -31,6 +32,12 @@ export const fetchDigiSales = gql`
         ownerAddress {
           id
         }
+        productAge
+        monthlyExpenses
+        monthlyRevenue
+        monthlyTraffic
+        location
+        productLink
       }
     }
   }
@@ -38,7 +45,7 @@ export const fetchDigiSales = gql`
 
 export const fetchMyDigiSales = gql`
   query getDigiSales($id: ID!) {
-    digiSales(where: {digi_: {ownerAddress: $id}}) {
+    digiSales(where: { digi_: { ownerAddress: $id } }) {
       id
       isOnSale
       auctionId
@@ -73,6 +80,35 @@ export const fetchSingleDigi = gql`
       title
       description
       worth
+    }
+  }
+`;
+
+
+export const fetchSingleDigiSale = gql`
+  query digi($id: ID!) {
+    digiSale(id: $id) {
+      id
+      isOnSale
+      auctionId
+      intergrityConfirmed
+      digi {
+        id
+        title
+        metadataURI
+        isOnSale
+        description
+        worth
+        ownerAddress {
+          id
+        }
+        productAge
+        monthlyExpenses
+        monthlyRevenue
+        monthlyTraffic
+        location
+        productLink
+      }
     }
   }
 `;
