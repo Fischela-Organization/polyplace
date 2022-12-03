@@ -7,7 +7,7 @@ import { useTheme } from "next-themes";
 
 import withTransition from "../components/withTransition";
 
-import { Button, Input, Loader, Modal } from "../components";
+import { Button, Loader, Modal } from "../components";
 
 import images from "../assets";
 import { useMoralis, useWeb3Contract } from "react-moralis";
@@ -23,7 +23,6 @@ import { storeNFT } from "../utils/uploadNft";
 
 const CreateNFT = () => {
   
-  const [fileUrl, setFileUrl] = useState(null);
   const [isLoad, setIsLoad] = useState(false);
   const [nftDetails, setNftDetails] = useState<{
     imageFile: any;
@@ -51,10 +50,9 @@ const CreateNFT = () => {
   });
 
   const { theme } = useTheme();
-  const { signup, isAuthenticated, user, account } = useMoralis();
+  const { account } = useMoralis();
   const { data, error, runContractFunction, isFetching, isLoading } =
     useWeb3Contract({});
-  const { isLoadingNFT } = { isLoadingNFT: "" };
   const mintNft = async (
     image: FileWithPath ,
     docFile: FileWithPath,
@@ -108,7 +106,6 @@ const CreateNFT = () => {
       setIsLoad(false);
     }
   };
-  const router = useRouter();
 
   // const onDropImage = useCallback(async (acceptedFile: any) => {
   //   const url = await uploadToIPFS(acceptedFile[0]);

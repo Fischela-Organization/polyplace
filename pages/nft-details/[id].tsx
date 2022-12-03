@@ -90,13 +90,16 @@ const ButtonOptions = ({
 
   if (digi && digi.isOnSale && digi.ownerAddress.id.toLowerCase() == account) {
     return (
-      <div className="flex flex-row sm:flex-col mt-10">
+      <div className="flex flex-col gap-5 sm:flex-col mt-10">
         <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
           You own this Digital Asset
         </p>
+        {digi.isOnSale && <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
+          Listed and on Auction
+        </p>}
       </div>
     );
-  } else if (digi.ownerAddress.id.toLowerCase() == account) {
+  } else if (digi.ownerAddress.id.toLowerCase() == account && !digi.isOnSale) {
     return (
       <div
         style={{ justifyContent: "center", alignItems: "center" }}
