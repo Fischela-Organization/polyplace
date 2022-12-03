@@ -51,7 +51,7 @@ const ResellNFT = () => {
           inputType="number"
           title="Price"
           placeholder="Asset Price"
-          handleClick={(e: any) => setPrice(e.target.value)}
+          // handleClick={(e: any) => setPrice(e.target.value)}
         />
 
         {image && <img className="rounded mt-4" width="350" src={image} />}
