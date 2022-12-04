@@ -16,9 +16,11 @@ import "../styles/globals.css";
 import { AppProps } from "next/app";
 import { store } from "../redux/store";
 
+const clientUri = process.env.NEXT_PUBLIC_GRAPHQL_CLIENT_ID
+
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  uri: "https://api.thegraph.com/subgraphs/name/norvirae/realincom-subgraph",
+  uri: clientUri,
 });
 
 const MyApp = ({ Component, pageProps }: AppProps) => (

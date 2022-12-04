@@ -97,6 +97,8 @@ const ButtonOptions = ({
   // useEffect(() => {
   //   console.log("digi", digi);
   // }, [digi]);
+  if(digiSal){
+
 
   return (
     <div className="flex flex-row justify-center gap-5 sm:flex-col mt-10">
@@ -154,6 +156,8 @@ const ButtonOptions = ({
       )}
     </div>
   );
+}
+return null
 };
 
 const PaymentBodyCmpAuction = ({
