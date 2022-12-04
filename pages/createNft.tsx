@@ -93,7 +93,7 @@ const CreateNFT = () => {
       await runContractFunction({
        params,
        onError: (e: any) => {handleError(e.data.message);},
-        onSuccess: () => handleSuccess("Success: Bid was placed successfuly")
+        onSuccess: () => handleSuccess("Success: NFt was minted Successfully")
       });
       setIsLoad(false);
     } catch (err: any) {
