@@ -84,16 +84,17 @@ const ButtonOptions = ({
   nftCurrency,
   setPaymentModal,
 }: ButtonOptions) => {
-
   if (digi && digi.isOnSale && digi.ownerAddress.id.toLowerCase() == account) {
     return (
       <div className="flex flex-col gap-5 sm:flex-col mt-10">
         <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
           You own this Digital Asset
         </p>
-        {digi.isOnSale && <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
-          Listed and on Auction
-        </p>}
+        {digi.isOnSale && (
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
+            Listed and on Auction
+          </p>
+        )}
       </div>
     );
   } else if (digi.ownerAddress.id.toLowerCase() == account && !digi.isOnSale) {
@@ -119,7 +120,7 @@ const ButtonOptions = ({
     );
   }
 
-  return null
+  return null;
 };
 
 const PaymentBodyCmpAuction = ({
@@ -172,7 +173,7 @@ const PaymentBodyCmpAuction = ({
           </p>
           <div className="dark:bg-nft-black-1 bg-white border dark:border-nft-black-1 border-nft-gray-2 rounded-lg w-full outline-none font-poppins dark:text-white text-nft-gray-2 text-base mt-4 px-4 py-3 flexBetween flex-row">
             <input
-              type="date"
+              type="datetime-local"
               className="flex w-full dark:bg-nft-black-1 bg-white outline-none"
               placeholder={"Reserved Price"}
               onChange={(e) =>
@@ -344,7 +345,7 @@ const AssetDetails = () => {
 
   useEffect(() => {
     // disable body scroll when navbar is open
-    
+
     if (digi) {
       if (nftImageDoc.image == "") {
         fetchImage(digi.digi.metadataURI)
@@ -372,15 +373,12 @@ const AssetDetails = () => {
     }
   }, [paymentModal, successModal, digi, nftImageDoc]);
 
-  const { runContractFunction, data } = useWeb3Contract({});
+  const { runContractFunction: startAuctions, data } = useWeb3Contract({});
   const placeBidContract = useWeb3Contract({});
 
   useEffect(() => {
     if (!router.isReady) return;
-
-    
   }, [router.isReady, data, isLoading]);
-
 
   const [auctionDetails, setAuctionDetails] = useState({
     tokenId: parseInt(String(router.query.id)),
@@ -393,14 +391,13 @@ const AssetDetails = () => {
     bidAmount: 0,
   });
 
-  
   const handleError = (message: string) => {
-    toast.error(message)
-  }
+    toast.error(message);
+  };
 
   const handleSuccess = (message: string) => {
-    toast.success(message)
-  }
+    toast.success(message);
+  };
 
   const startAuction = async () => {
     try {
@@ -410,7 +407,7 @@ const AssetDetails = () => {
         contractAddress: auctionAddress,
         functionName: "startAuction",
         params: {
-          tokenId: auctionDetails.tokenId,
+          tokenId: router.query.id,
           startTime: Math.floor(Date.now() / 1000),
           endTime: Math.floor(
             new Date(auctionDetails.endTime).getTime() / 1000
@@ -419,10 +416,18 @@ const AssetDetails = () => {
         },
       };
 
-      await runContractFunction({ params: options, onError: (e: any) => {handleError(e.data.message);},
-      onSuccess: () => handleSuccess("Success: Auction started successfully") });
+      await startAuctions({
+        params: options,
+        onError: (e: any) => {
+          handleError(e.data.message);
+          console.log(e);
+        },
+        onSuccess: () => handleSuccess("Success: Auction started successfully"),
+      });
+
       setIsLoading(false);
     } catch (err) {
+      console.log(err);
       setIsLoading(false);
     }
   };
@@ -470,7 +475,9 @@ const AssetDetails = () => {
 
         <div className="doc-side font-poppins rounded dark:text-white text-nft-black-1 font-italic text-sm mt-3 p-4 dark:bg-nft-black-3 rounded-xl relative w-557 minmd:w-2/3 minmd:h-2/3 sm:w-full sm:h-300 h-557 ">
           <div>
-          <h2 style={{color: "#1498D5"}}>{digi? digi.title: null} {" "} Blue Paper</h2>
+            <h2 style={{ color: "#1498D5" }}>
+              {digi ? digi.title : null} Blue Paper
+            </h2>
 
             <AiOutlineFilePdf style={{ fontSize: "12rem" }} />
             <a style={{ color: "#1498D5", textDecoration: "underline" }}>
