@@ -420,14 +420,12 @@ const AssetDetails = () => {
         params: options,
         onError: (e: any) => {
           handleError(e.data.message);
-          console.log(e);
         },
         onSuccess: () => handleSuccess("Success: Auction started successfully"),
       });
 
       setIsLoading(false);
     } catch (err) {
-      console.log(err);
       setIsLoading(false);
     }
   };
@@ -564,20 +562,25 @@ const AssetDetails = () => {
           <div className="mt-3">
             <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base">
               {digi ? digi.digi.description : "Loading... description"}
-
-              <Link href={"#"} legacyBehavior>
-                <span className="checkout-link text-sm">
-                  Checkout the Product
-                </span>
-              </Link>
+              <a style={{ color: "#1498D5", textDecoration: "underline" }}>
+                <Link
+                  target={"_blank"}
+                  href={digi ? digi.digi.productLink : "#"}
+                  legacyBehavior
+                >
+                  <span className="checkout-link text-sm">
+                    Checkout the Product
+                  </span>
+                </Link>
+              </a>
             </p>
 
             <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base mt-3">
               App or Product Age:{" "}
-              {isNaN(new Date(Number(digi.digi.productAge)).getFullYear())
+              {digi?isNaN(new Date(Number(digi.digi.productAge)).getFullYear())
                 ? "Not Provided"
                 : "Since " +
-                  String(new Date(Number(digi.digi.productAge)).getFullYear())}
+                  String(new Date(Number(digi.digi.productAge)).getFullYear()): null}
             </p>
 
             <div className="font-poppins rounded dark:text-white text-nft-black-1 font-italic text-sm mt-3 p-4 dark:bg-nft-black-3 rounded-xl">
