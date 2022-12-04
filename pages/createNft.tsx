@@ -12,7 +12,7 @@ import { Button, Loader, Modal } from "../components";
 import images from "../assets";
 import { useMoralis, useWeb3Contract } from "react-moralis";
 import { nftAbi } from "../Artifacts/abi/abiManager";
-import { nftAddress } from "../Artifacts/contractAddress/contractManager";
+import { auctionAddress, nftAddress } from "../Artifacts/contractAddress/contractManager";
 import { storeNFT } from "../utils/uploadNft";
 import { toast } from "react-toastify";
 
@@ -58,8 +58,12 @@ const CreateNFT = () => {
   }
   const { theme } = useTheme();
   const { account } = useMoralis();
-  const { data, error, runContractFunction, isFetching, isLoading } =
+  const { runContractFunction } =
     useWeb3Contract({});
+
+    const { runContractFunction:setApprovalForAll} =
+    useWeb3Contract({});
+
   const mintNft = async (
     image: FileWithPath ,
     docFile: FileWithPath,
@@ -88,7 +92,22 @@ const CreateNFT = () => {
         },
       };
 
+      const paramsApproval = {
+        abi: nftAbi,
+        contractAddress: nftAddress,
+        functionName: "setApprovalForAll",
+        params: {
+          operator: auctionAddress,
+          approved: true,
+          
+        },
+      };
 
+      await setApprovalForAll({
+        params: paramsApproval,
+        onError: (e: any) => {handleError(e.data.message);},
+        onSuccess: () => handleSuccess("Success: Approval successfully set")
+      })
 
       await runContractFunction({
        params,
