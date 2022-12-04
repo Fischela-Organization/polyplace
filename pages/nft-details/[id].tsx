@@ -556,7 +556,8 @@ const AssetDetails = () => {
               Details
             </p>
             <p className="font-poppins font-bold dark:text-white text-nft-black-1 font-normal text-base mt-3">
-              Listing Price: {digi ? convertFromWei(digi.digi.worth) : 0} MATIC
+              Digi Networth: {digi ? convertFromWei(digi.digi.worth) : 0} MATIC
+              
             </p>
           </div>
           <div className="mt-3">
