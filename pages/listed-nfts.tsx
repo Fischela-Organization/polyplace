@@ -39,10 +39,6 @@ const ListedNFTs = () => {
   } = useQuery(fetchMyDigiSales, { variables: {id: account} });
 
   useEffect(() => {
-
-
-    console.log(digiSales, "DIGISALES")
-
     
   }, [digiSales]);
 

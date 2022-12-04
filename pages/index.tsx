@@ -91,39 +91,6 @@ const Home = () => {
   const parentRef = useRef(null);
   const scrollRef = useRef(null);
 
-  useEffect(() => {
-    // console.log(useMo);
-    // console.log("=======================================================================")
-    // console.log(data, error, runContractFunction, isFetching, isLoading)
-  }, []);
-
-  // useEffect(() => {
-  //   fetchNFTs()
-  //     .then((items: any) => {
-  //       setNfts(items);
-  //       setNftsCopy(items);
-  //       setIsLoading(false);
-  //     });
-  // }, []);
-
-  // useEffect(() => {
-  //   const sortedNfts = [...nfts];
-
-  //   switch (activeSelect) {
-  //     case 'Price (low to high)':
-  //       setNfts(sortedNfts.sort((a:any, b:any) => a.price - b.price));
-  //       break;
-  //     case 'Price (high to low)':
-  //       setNfts(sortedNfts.sort((a:any, b:any) => b.price - a.price));
-  //       break;
-  //     case 'Recently Added':
-  //       setNfts(sortedNfts.sort((a:any, b:any) => b.tokenId - a.tokenId));
-  //       break;
-  //     default:
-  //       setNfts(nfts);
-  //       break;
-  //   }
-  // }, [activeSelect]);
 
   const onHandleSearch = (value: any) => {
     const filteredNfts = nfts.filter(({ name }: { name: any }) =>
@@ -181,7 +148,6 @@ const Home = () => {
 
     window.addEventListener("resize", isScrollable);
 
-    console.log(digiSales, "DIGISALES")
 
     return () => {
       window.removeEventListener("resize", isScrollable);

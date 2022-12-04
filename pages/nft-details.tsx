@@ -79,10 +79,7 @@ const ButtonOptions = ({
   nftCurrency,
   setPaymentModal,
 }: ButtonOptions) => {
-  const router = useRouter();
-  // useEffect(() => {
-  //   console.log("digi", digi);
-  // }, [digi]);
+
 
   if (digi && digi.isOnSale && digi.ownerAddress.id.toLowerCase() == account) {
     return (
@@ -341,7 +338,6 @@ const AssetDetails = () => {
 
   useEffect(() => {
     // disable body scroll when navbar is open
-    // console.log(digi, router.query.id, "DIGI");
     if (paymentModal || successModal) {
       document.body.style.overflow = "hidden";
     } else {
@@ -355,31 +351,8 @@ const AssetDetails = () => {
   useEffect(() => {
     if (!router.isReady) return;
 
-    // setNft({
-    //   image: nftImages[`creator${8}`],
-    //   itemId: "2",
-    //   name: "Candy Crush",
-    //   owner: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a",
-    //   netProfit: "$3000",
-    //   age: "5 years",
-    //   price: "20ETH",
-    //   seller: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a",
-    //   description: "A Mobile Hyper-Casual game platform with proven concept, great potential and established ASO with yearly 1M organic installs.",
-    //   tokenId: "4",
-    //   tokenURI: nftImages[`nft${1}`],
-    // });
-
-    // setIsLoading(false);
-
-    // console.log(data, "DATA")
   }, [router.isReady, data, isLoading]);
 
-  const checkout = async () => {
-    // await buyNft(nft);
-
-    setPaymentModal(false);
-    setSuccessModal(true);
-  };
 
   const [auctionDetails, setAuctionDetails] = useState({
     tokenId: parseInt(String(router.query.id)),
@@ -409,18 +382,10 @@ const AssetDetails = () => {
         },
       };
 
-      console.log(
-        "GOT IN",
-        auctionDetails.tokenId,
-        Math.floor(Date.now() / 1000),
-        Math.floor(new Date(auctionDetails.endTime).getTime() / 1000),
-        convertToWei(auctionDetails.reservedPrice)
-      );
+   
       await runContractFunction({ params: options });
-      console.log("GOT OUT", auctionDetails.endTime);
       setIsLoading(false);
     } catch (err) {
-      console.log(err);
       setIsLoading(false);
     }
   };
@@ -439,14 +404,12 @@ const AssetDetails = () => {
         value: ethers.utils.parseUnits(String(bidDetails.bidAmount), "wei")
       };
 
-      console.log("BID PLACED", bidDetails.bidAmount, router.query.auctionId)
       await placeBidContract.runContractFunction({params: options})
       setIsLoading(false)
 
     }
 
     catch(err){
-      console.log(err)
       setIsLoading(false)
     }
   }

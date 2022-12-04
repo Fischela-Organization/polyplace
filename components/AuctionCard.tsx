@@ -57,7 +57,6 @@ const AuctionCard = ({ nft, onProfilePage }: NftCardInterface) => {
             setNftImage((old) => ({ ...old, image: res }));
           })
           .catch((err) => {
-            console.log(err);
             setNftImage((old) => ({ ...old, image: "" }));
           });
     }

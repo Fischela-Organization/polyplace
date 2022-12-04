@@ -69,10 +69,8 @@ const CreateNFT = () => {
   ) => {
     try {
       setIsLoad(true);
-      const nftResource = await storeNFT(image, docFile, title, description);
-      console.log(nftResource?.url, "HOLE");
+      const nftResource: any = await storeNFT(image, docFile, title, description);
 
-      console.log(nftDetails)
       const params = {
         abi: nftAbi,
         contractAddress: nftAddress,
@@ -90,28 +88,15 @@ const CreateNFT = () => {
         },
       };
 
-      
-      console.log({
-        _title: nftDetails.title,
-        _description: nftDetails.description,
-        _digiURI: nftResource?.url,
-        productAge: new Date(nftDetails.productAge).getTime(),
-        monthlyRevenue: nftDetails.revenue,
-        monthlyExpenses:nftDetails.expenses,
-        monthlyTraffic: nftDetails.traffic,
-        location: nftDetails.location,
-        productLink: nftDetails.productLink,
-      })
+
 
       await runContractFunction({
        params,
-       onError: (e: any) => {handleError(e.data.message); console.log(e)},
+       onError: (e: any) => {handleError(e.data.message);},
         onSuccess: () => handleSuccess("Success: Bid was placed successfuly")
       });
-      console.log(data, account, "DATA");
       setIsLoad(false);
     } catch (err) {
-      console.log(err)
       setIsLoad(false);
     }
   };
@@ -126,14 +111,12 @@ const CreateNFT = () => {
     let mainFile = acceptedFile[0];
     if (mainFile) {
       if (mainFile.type.split("/")[0] == "image") {
-        console.log("CALLED");
         setNftDetails((old) => ({ ...old, imageFile: mainFile }));
       } else if (mainFile.type.split("/")[1] == "pdf") {
         setNftDetails((old) => ({ ...old, docFile: mainFile }));
       }
     }
 
-    // console.log(acceptedFile, nftDetails, "FILE");
   }, []);
 
   const {
@@ -310,7 +293,6 @@ const CreateNFT = () => {
                   ...old,
                   description: e.target.value,
                 }));
-                // console.log(nftDetails, "HIPI");
               }}
             ></textarea>
             <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl"></p>

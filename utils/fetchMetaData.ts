@@ -11,7 +11,6 @@ const extractFolderIdMashURI = (uri: string) => {
 export const fetchImage = async (metadataURI: string) => {
     const fullURI = extractFolderIdMashURI(metadataURI)
     const metadata: any = await axios.get(fullURI)
-    console.log(extractFolderIdMashURI(metadata.data.image), "METADATA")
 
     return extractFolderIdMashURI(metadata.data.image)
 }
@@ -19,7 +18,6 @@ export const fetchImage = async (metadataURI: string) => {
 export const fetchDocument = async (metadataURI: string) => {
     const fullURI = extractFolderIdMashURI(metadataURI)
     const metadata: any = await axios.get(fullURI)
-    console.log(extractFolderIdMashURI(metadata.data.docFile), "METADATA")
 
     return extractFolderIdMashURI(metadata.data.docFile)
 }

@@ -1,13 +1,6 @@
 // Import the NFTStorage class and File constructor from the 'nft.storage' package
 import { NFTStorage, File } from "nft.storage";
 
-// The 'fs' builtin module on Node.js provides access to the file system
-import fs from "fs";
-
-// The 'path' module provides helpers for manipulating filesystem paths
-import path from "path";
-import { TokenInput } from "nft.storage/dist/src/token";
-
 // Paste your NFT.Storage API key into the quotes:
 const NFT_STORAGE_KEY = process.env.NEXT_PUBLIC_WEB_3_STORAGE_ACCESS_TOKEN || "";
 /**
@@ -31,7 +24,7 @@ export async function storeNFT(image: Blob | globalThis.File |undefined, docFile
       docFile
     });
   } catch (err) {
-    console.log(err, "THIS IS ERROR");
+    return err
   }
 }
 

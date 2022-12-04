@@ -93,71 +93,64 @@ const ButtonOptions = ({
   nftCurrency,
   setPaymentModal,
 }: ButtonOptions) => {
-  const router = useRouter();
-  // useEffect(() => {
-  //   console.log("digi", digi);
-  // }, [digi]);
-  if(digiSal){
+  if (digiSal) {
+    return (
+      <div className="flex flex-row justify-center gap-5 sm:flex-col mt-10">
+        {digiSal.isOnSale && digiSal.digi.ownerAddress.id == account ? (
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
+            You own this Digital Asset
+          </p>
+        ) : null}
 
-
-  return (
-    <div className="flex flex-row justify-center gap-5 sm:flex-col mt-10">
-      {digiSal.isOnSale && digiSal.digi.ownerAddress.id == account ? (
-        <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
-          You own this Digital Asset
-        </p>
-      ) : null}
-
-      {digiSal.isOnSale && digiSal.digi.ownerAddress.id == account ? (
-        <Button
-          btnName={`Cancel Auction`}
-          btnType="primary"
-          classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-          handleClick={() => cancelAuction(digiSal)}
-        />
-      ) : null}
-      {console.log(digiSal.auctionResulted, "resulty")}
-      {!digiSal.isOnSale && digiSal.auctionResulted && (
-        <Button
-          btnName={`Release Funds`}
-          btnType="primary"
-          classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-          handleClick={() => releaseFunds(digiSal)}
-        />
-      )}
-
-      {digiSal.isOnSale &&
-        !digiSal.auctionResulted &&
-        digiSal.digi.ownerAddress.id == account && (
+        {digiSal.isOnSale && digiSal.digi.ownerAddress.id == account ? (
           <Button
-            btnName={`Result Auction`}
+            btnName={`Cancel Auction`}
             btnType="primary"
             classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-            handleClick={() => resultAuction(digiSal)}
+            handleClick={() => cancelAuction(digiSal)}
+          />
+        ) : null}
+        {!digiSal.isOnSale && digiSal.auctionResulted && (
+          <Button
+            btnName={`Release Funds`}
+            btnType="primary"
+            classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+            handleClick={() => releaseFunds(digiSal)}
           />
         )}
 
-      {digiSal.isOnSale && digiSal.digi.ownerAddress.id != account && (
-        <Button
-          btnName={`Place Bid ${
-            digiSal ? convertFromWei(digiSal.amount) : ""
-          } ${nftCurrency}`}
-          btnType="primary"
-          classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-          handleClick={() =>
-            setModalStatus(
-              (old: { showBidModal: boolean; showAuction: boolean }) => ({
-                ...old,
-                showBidModal: true,
-              })
-            )
-          }
-        />
-      )}
-    </div>
-  );
-}
-return null
+        {digiSal.isOnSale &&
+          !digiSal.auctionResulted &&
+          digiSal.digi.ownerAddress.id == account && (
+            <Button
+              btnName={`Result Auction`}
+              btnType="primary"
+              classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+              handleClick={() => resultAuction(digiSal)}
+            />
+          )}
+
+        {digiSal.isOnSale && digiSal.digi.ownerAddress.id != account && (
+          <Button
+            btnName={`Place Bid ${
+              digiSal ? convertFromWei(digiSal.amount) : ""
+            } ${nftCurrency}`}
+            btnType="primary"
+            classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+            handleClick={() =>
+              setModalStatus(
+                (old: { showBidModal: boolean; showAuction: boolean }) => ({
+                  ...old,
+                  showBidModal: true,
+                })
+              )
+            }
+          />
+        )}
+      </div>
+    );
+  }
+  return null;
 };
 
 const PaymentBodyCmpAuction = ({
@@ -383,7 +376,6 @@ const AssetDetails = () => {
 
   useEffect(() => {
     // disable body scroll when navbar is open
-    // console.log(digi, router.query.id, "DIGI");
     if (digiSale) {
       if (nftImageDoc.image == "") {
         fetchImage(digiSale.digiSale.digi.metadataURI)
@@ -391,7 +383,6 @@ const AssetDetails = () => {
             setNftImageDoc((old) => ({ ...old, image: res }));
           })
           .catch((err) => {
-            console.log(err);
             setNftImageDoc((old) => ({ ...old, image: "" }));
           });
 
@@ -400,13 +391,11 @@ const AssetDetails = () => {
             setNftImageDoc((old) => ({ ...old, doc: res }));
           })
           .catch((err) => {
-            console.log(err);
             setNftImageDoc((old) => ({ ...old, doc: "" }));
           });
       }
     }
 
-    console.log(digiSale, "DIGISALE");
     if (paymentModal || successModal) {
       document.body.style.overflow = "hidden";
     } else {
@@ -415,46 +404,15 @@ const AssetDetails = () => {
   }, [paymentModal, successModal, digiSale, nftImageDoc]);
 
   const { runContractFunction, data } = useWeb3Contract({});
-  const {runContractFunction:confirmResults} = useWeb3Contract({});
-  const {runContractFunction:resultAuctions} = useWeb3Contract({});
-  const {runContractFunction:placeBidAction} = useWeb3Contract({});
-  const {runContractFunction: cancelAuctions} = useWeb3Contract({});
-
+  const { runContractFunction: confirmResults } = useWeb3Contract({});
+  const { runContractFunction: resultAuctions } = useWeb3Contract({});
+  const { runContractFunction: placeBidAction } = useWeb3Contract({});
+  const { runContractFunction: cancelAuctions } = useWeb3Contract({});
 
   useEffect(() => {
     if (!router.isReady) return;
 
-    // if (digiSale) {
-    //   setBidDetails((old) => ({
-    //     ...old, bidAmount: digiSale.digiSale.amount
-    //   }))
-    // }
-
-    // setNft({
-    //   image: nftImages[`creator${8}`],
-    //   itemId: "2",
-    //   name: "Candy Crush",
-    //   owner: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a",
-    //   netProfit: "$3000",
-    //   age: "5 years",
-    //   price: "20ETH",
-    //   seller: "0x929a9c9b9d9e9f9a9c9d9a9e9b9a9d9c9b9e9a9d9c9b9e9a",
-    //   description: "A Mobile Hyper-Casual game platform with proven concept, great potential and established ASO with yearly 1M organic installs.",
-    //   tokenId: "4",
-    //   tokenURI: nftImages[`nft${1}`],
-    // });
-
-    // setIsLoading(false);
-
-    // console.log(data, "DATA")
   }, [router.isReady, data, isLoading]);
-
-  const checkout = async () => {
-    // await buyNft(nft);
-
-    setPaymentModal(false);
-    setSuccessModal(true);
-  };
 
   const [auctionDetails, setAuctionDetails] = useState({
     tokenId: parseInt(String(router.query.id)),
@@ -484,19 +442,15 @@ const AssetDetails = () => {
         },
       };
 
-      console.log(
-        "GOT IN",
-        auctionDetails.tokenId,
-        Math.floor(Date.now() / 1000),
-        Math.floor(new Date(auctionDetails.endTime).getTime() / 1000),
-        convertToWei(auctionDetails.reservedPrice)
-      );
-      await runContractFunction({ params: options, onError: (e: any) => {handleError(e.data.message); console.log(e)},
-      onSuccess: () => handleSuccess("Success: Bid was placed successfuly") });
-      console.log("GOT OUT", auctionDetails.endTime);
+      await runContractFunction({
+        params: options,
+        onError: (e: any) => {
+          handleError(e.data.message);
+        },
+        onSuccess: () => handleSuccess("Success: Auction Started successfully"),
+      });
       setIsLoading(false);
     } catch (err) {
-      console.log(err);
       setIsLoading(false);
     }
   };
@@ -504,14 +458,6 @@ const AssetDetails = () => {
   const placeBid = async (digiSale: any) => {
     try {
       setIsLoading(true);
-      console.log(
-        digiSale.auctionId,
-        "BID PLACED",
-        digiSale,
-        ethers.utils.parseEther(String(bidDetails.bidAmount)).toString(),
-        "HIE",
-        bidDetails.bidAmount.toString()
-      );
 
       const options = {
         abi: auctionAbi,
@@ -525,11 +471,15 @@ const AssetDetails = () => {
           .toString(),
       };
 
-      await placeBidAction({ params: options, onError: (e: any) => {handleError(e.data.message); console.log(e)},
-        onSuccess: () => handleSuccess("Success: Bid was placed successfuly")});
+      await placeBidAction({
+        params: options,
+        onError: (e: any) => {
+          handleError(e.data.message);
+        },
+        onSuccess: () => handleSuccess("Success: Bid was placed successfuly"),
+      });
       setIsLoading(false);
     } catch (err) {
-      console.log(err);
       setIsLoading(false);
     }
   };
@@ -537,16 +487,6 @@ const AssetDetails = () => {
   const resultAuction = async (digiSale: any) => {
     try {
       setIsLoading(true);
-      console.log(
-        digiSale.auctionId,
-        "BID PLACED",
-        digiSale,
-        ethers.utils.parseEther(String(bidDetails.bidAmount)).toString(),
-        "HIE",
-        bidDetails.bidAmount.toString()
-      );
-
-
 
       const options = {
         abi: auctionAbi,
@@ -555,37 +495,33 @@ const AssetDetails = () => {
         params: {
           _auctionId: digiSale.auctionId,
         },
-        
       };
 
-      await resultAuctions({ params: options, onError: (e: any) => {handleError(e.data.message); console.log(e)},
-      onSuccess: () => handleSuccess("Success: Auction was resulted successfully") });
+      await resultAuctions({
+        params: options,
+        onError: (e: any) => {
+          handleError(e.data.message);
+        },
+        onSuccess: () =>
+          handleSuccess("Success: Auction was resulted successfully"),
+      });
       setIsLoading(false);
     } catch (err) {
-      console.log(err);
       setIsLoading(false);
     }
   };
 
-
   const handleError = (message: string) => {
-    toast.error(message)
-  }
+    toast.error(message);
+  };
 
   const handleSuccess = (message: string) => {
-    toast.success(message)
-  }
+    toast.success(message);
+  };
   const releaseFunds = async (digiSale: any) => {
     try {
       setIsLoading(true);
-      console.log(
-        digiSale.auctionId,
-        "BID PLACED",
-        digiSale,
-        ethers.utils.parseEther(String(bidDetails.bidAmount)).toString(),
-        "HIE",
-        bidDetails.bidAmount.toString()
-      );
+      
 
       const options = {
         abi: auctionAbi,
@@ -594,14 +530,18 @@ const AssetDetails = () => {
         params: {
           _auctionId: digiSale.auctionId,
         },
-        
       };
 
-      await confirmResults({ params: options, onError: (e: any) => {handleError(e.data.message); console.log(e)},
-      onSuccess: () => handleSuccess("Success: funds were released successfuly successfuly") });
+      await confirmResults({
+        params: options,
+        onError: (e: any) => {
+          handleError(e.data.message);
+        },
+        onSuccess: () =>
+          handleSuccess("Success: funds were released successfully"),
+      });
       setIsLoading(false);
     } catch (err) {
-      console.log(err);
       setIsLoading(false);
     }
   };
@@ -609,14 +549,7 @@ const AssetDetails = () => {
   const cancelAuction = async (digiSale: any) => {
     try {
       setIsLoading(true);
-      console.log(
-        digiSale.auctionId,
-        "BID PLACED",
-        digiSale,
-        ethers.utils.parseEther(String(bidDetails.bidAmount)).toString(),
-        "HIE",
-        bidDetails.bidAmount.toString()
-      );
+      
 
       const options = {
         abi: auctionAbi,
@@ -627,11 +560,16 @@ const AssetDetails = () => {
         },
       };
 
-      await cancelAuctions({ params: options, onError: (e: any) => {handleError(e.data.message); console.log(e)},
-      onSuccess: () => handleSuccess("Success: Auction was cancelled successfuly") });
+      await cancelAuctions({
+        params: options,
+        onError: (e: any) => {
+          handleError(e.data.message);
+        },
+        onSuccess: () =>
+          handleSuccess("Success: Auction was cancelled successfully"),
+      });
       setIsLoading(false);
     } catch (err) {
-      console.log(err);
       setIsLoading(false);
     }
   };
@@ -641,7 +579,6 @@ const AssetDetails = () => {
 
   return (
     <div className="relative flex justify-center md:flex-col min-h-screen">
-
       <div className="relative flex-1 flex flex-col gap-10 flexCenter sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1">
         <div className="relative w-557 minmd:w-2/3 minmd:h-2/3 sm:w-full sm:h-300 h-557 ">
           <Image

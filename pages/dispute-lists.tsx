@@ -30,38 +30,6 @@ const DisputeList = () => {
   },});
 
 
-  const { account } = useMoralis()
-
-  useEffect(() => {
-    // fetchMyNFTsOrListedNFTs()
-    //   .then((items: any) => {
-    //     setNfts(items);
-    //     setNftsCopy(items);
-    //     setIsLoading(false);
-    //   });
-
-    console.log(account, "Account")
-  }, []);
-
-  // useEffect(() => {
-  //   const sortedNfts = [...nfts];
-
-  //   switch (activeSelect) {
-  //     case 'Price (low to high)':
-  //       setNfts(sortedNfts.sort((a:{price: number}, b:{price: number}) => a.price - b.price));
-  //       break;
-  //     case 'Price (high to low)':
-  //       setNfts(sortedNfts.sort((a:{price: number}, b:{price: number}) => b.price - a.price));
-  //       break;
-  //     case 'Recently Added':
-  //       setNfts(sortedNfts.sort((a:{tokenId: number}, b:{tokenId: number}) => b.tokenId - a.tokenId));
-  //       break;
-  //     default:
-  //       setNfts(nfts);
-  //       break;
-  //   }
-  // }, [activeSelect]);
-
   if (isLoading) {
     return (
       <div className="flexStart min-h-screen">

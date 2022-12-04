@@ -44,7 +44,6 @@ const MyNFTs = () => {
     //     setIsLoading(false);
     //   });
     refetch({account})
-    console.log(account, "Account", digis)
   }, [digis]);
 
   // useEffect(() => {

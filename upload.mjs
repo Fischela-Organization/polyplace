@@ -24,7 +24,6 @@ async function storeNFT(imagePath, name, description) {
     const image = await fileFromPath(imagePath);
     // create a new NFTStorage client using our API key
     const nftstorage = new NFTStorage({ token: NFT_STORAGE_KEY });
-    console.log("ESCAPED", image);
 
     // call client.store, passing in the image & metadata
     return nftstorage.store({
@@ -34,7 +33,7 @@ async function storeNFT(imagePath, name, description) {
       file: image
     });
   } catch (err) {
-    console.log(err, "THIS IS ERROR");
+    return err
   }
 }
 
@@ -59,7 +58,6 @@ async function fileFromPath(filePath) {
  * positional arguments for imagePath, name, and description
  */
 async function main() {
-  console.log("IN");
   const args = process.argv.slice(2);
   if (args.length !== 3) {
     console.error(
@@ -69,9 +67,7 @@ async function main() {
   }
 
   const [imagePath, name, description] = args;
-  console.log(args, NFT_STORAGE_KEY, "HULI");
   const result = await storeNFT(imagePath, name, description);
-  console.log(result);
 }
 
 // Don't forget to actually call the main function!

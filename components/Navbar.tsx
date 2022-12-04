@@ -79,15 +79,10 @@ const ButtonGroup = ({
   router,
   setIsOpen,
 }: ButtonGroupInterface) => {
-  const { connectWallet, currentAccount } = {
-    connectWallet: "",
-    currentAccount: "",
-  };
-  const { signup, isAuthenticated, user, account } = useMoralis();
+ 
+  const { account } = useMoralis();
 
-  useEffect(() => {
-    console.log(user, "USER", account);
-  });
+
 
   return account ? (
     <div style={{display: "flex"}}>
