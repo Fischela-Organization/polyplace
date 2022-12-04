@@ -21,6 +21,7 @@ import { auctionAbi } from "../Artifacts/abi/abiManager";
 import { auctionAddress } from "../Artifacts/contractAddress/contractManager";
 import { convertToWei } from "../utils/web3conversions";
 import { ethers } from "ethers";
+import { toast } from "react-toastify";
 
 interface PaymentBodyCmpAuction {
   nft: any;
@@ -385,7 +386,8 @@ const AssetDetails = () => {
    
       await runContractFunction({ params: options });
       setIsLoading(false);
-    } catch (err) {
+    } catch (err: any) {
+      toast.error(err.message)
       setIsLoading(false);
     }
   };

@@ -411,7 +411,6 @@ const AssetDetails = () => {
 
   useEffect(() => {
     if (!router.isReady) return;
-
   }, [router.isReady, data, isLoading]);
 
   const [auctionDetails, setAuctionDetails] = useState({
@@ -479,7 +478,9 @@ const AssetDetails = () => {
         onSuccess: () => handleSuccess("Success: Bid was placed successfuly"),
       });
       setIsLoading(false);
-    } catch (err) {
+    } catch (err: any) {
+      toast.error(err.message);
+
       setIsLoading(false);
     }
   };
@@ -506,7 +507,9 @@ const AssetDetails = () => {
           handleSuccess("Success: Auction was resulted successfully"),
       });
       setIsLoading(false);
-    } catch (err) {
+    } catch (err: any) {
+      toast.error(err.message);
+
       setIsLoading(false);
     }
   };
@@ -521,7 +524,6 @@ const AssetDetails = () => {
   const releaseFunds = async (digiSale: any) => {
     try {
       setIsLoading(true);
-      
 
       const options = {
         abi: auctionAbi,
@@ -541,7 +543,9 @@ const AssetDetails = () => {
           handleSuccess("Success: funds were released successfully"),
       });
       setIsLoading(false);
-    } catch (err) {
+    } catch (err: any) {
+      toast.error(err.message);
+
       setIsLoading(false);
     }
   };
@@ -549,7 +553,6 @@ const AssetDetails = () => {
   const cancelAuction = async (digiSale: any) => {
     try {
       setIsLoading(true);
-      
 
       const options = {
         abi: auctionAbi,
@@ -569,7 +572,9 @@ const AssetDetails = () => {
           handleSuccess("Success: Auction was cancelled successfully"),
       });
       setIsLoading(false);
-    } catch (err) {
+    } catch (err: any) {
+      toast.error(err.message);
+
       setIsLoading(false);
     }
   };

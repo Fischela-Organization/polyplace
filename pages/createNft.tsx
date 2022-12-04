@@ -96,7 +96,8 @@ const CreateNFT = () => {
         onSuccess: () => handleSuccess("Success: Bid was placed successfuly")
       });
       setIsLoad(false);
-    } catch (err) {
+    } catch (err: any) {
+      toast.error(err.message)
       setIsLoad(false);
     }
   };

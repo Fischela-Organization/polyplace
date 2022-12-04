@@ -1,5 +1,6 @@
 // Import the NFTStorage class and File constructor from the 'nft.storage' package
 import { NFTStorage, File } from "nft.storage";
+import { toast } from "react-toastify";
 
 // Paste your NFT.Storage API key into the quotes:
 const NFT_STORAGE_KEY = process.env.NEXT_PUBLIC_WEB_3_STORAGE_ACCESS_TOKEN || "";
@@ -23,7 +24,9 @@ export async function storeNFT(image: Blob | globalThis.File |undefined, docFile
       description,
       docFile
     });
-  } catch (err) {
+  } catch (err: any) {
+    toast.error(err.message)
+
     return err
   }
 }
