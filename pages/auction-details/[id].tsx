@@ -27,6 +27,7 @@ import { AiFillWarning, AiOutlineFilePdf } from "react-icons/ai";
 import Countdown from "react-countdown";
 
 import { AnyMxRecord } from "dns";
+import { toast, ToastContainer } from "react-toastify";
 
 interface PaymentBodyCmpAuction {
   nft: any;
@@ -410,7 +411,11 @@ const AssetDetails = () => {
   }, [paymentModal, successModal, digiSale, nftImageDoc]);
 
   const { runContractFunction, data } = useWeb3Contract({});
-  const placeBidContract = useWeb3Contract({});
+  const {runContractFunction:confirmResults} = useWeb3Contract({});
+  const {runContractFunction:resultAuctions} = useWeb3Contract({});
+  const {runContractFunction:placeBidAction} = useWeb3Contract({});
+  const {runContractFunction: cancelAuctions} = useWeb3Contract({});
+
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -482,7 +487,8 @@ const AssetDetails = () => {
         Math.floor(new Date(auctionDetails.endTime).getTime() / 1000),
         convertToWei(auctionDetails.reservedPrice)
       );
-      await runContractFunction({ params: options });
+      await runContractFunction({ params: options, onError: (e: any) => {handleError(e.data.message); console.log(e)},
+      onSuccess: () => handleSuccess("Success: Bid was placed successfuly") });
       console.log("GOT OUT", auctionDetails.endTime);
       setIsLoading(false);
     } catch (err) {
@@ -515,7 +521,8 @@ const AssetDetails = () => {
           .toString(),
       };
 
-      await placeBidContract.runContractFunction({ params: options });
+      await placeBidAction({ params: options, onError: (e: any) => {handleError(e.data.message); console.log(e)},
+        onSuccess: () => handleSuccess("Success: Bid was placed successfuly")});
       setIsLoading(false);
     } catch (err) {
       console.log(err);
@@ -535,6 +542,8 @@ const AssetDetails = () => {
         bidDetails.bidAmount.toString()
       );
 
+
+
       const options = {
         abi: auctionAbi,
         contractAddress: auctionAddress,
@@ -545,7 +554,8 @@ const AssetDetails = () => {
         
       };
 
-      await placeBidContract.runContractFunction({ params: options });
+      await resultAuctions({ params: options, onError: (e: any) => {handleError(e.data.message); console.log(e)},
+      onSuccess: () => handleSuccess("Success: Auction was resulted successfully") });
       setIsLoading(false);
     } catch (err) {
       console.log(err);
@@ -553,6 +563,14 @@ const AssetDetails = () => {
     }
   };
 
+
+  const handleError = (message: string) => {
+    toast.error(message)
+  }
+
+  const handleSuccess = (message: string) => {
+    toast.success(message)
+  }
   const releaseFunds = async (digiSale: any) => {
     try {
       setIsLoading(true);
@@ -575,7 +593,8 @@ const AssetDetails = () => {
         
       };
 
-      await placeBidContract.runContractFunction({ params: options });
+      await confirmResults({ params: options, onError: (e: any) => {handleError(e.data.message); console.log(e)},
+      onSuccess: () => handleSuccess("Success: funds were released successfuly successfuly") });
       setIsLoading(false);
     } catch (err) {
       console.log(err);
@@ -604,7 +623,8 @@ const AssetDetails = () => {
         },
       };
 
-      await placeBidContract.runContractFunction({ params: options });
+      await cancelAuctions({ params: options, onError: (e: any) => {handleError(e.data.message); console.log(e)},
+      onSuccess: () => handleSuccess("Success: Auction was cancelled successfuly") });
       setIsLoading(false);
     } catch (err) {
       console.log(err);
@@ -617,6 +637,7 @@ const AssetDetails = () => {
 
   return (
     <div className="relative flex justify-center md:flex-col min-h-screen">
+
       <div className="relative flex-1 flex flex-col gap-10 flexCenter sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1">
         <div className="relative w-557 minmd:w-2/3 minmd:h-2/3 sm:w-full sm:h-300 h-557 ">
           <Image

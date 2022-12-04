@@ -3,6 +3,7 @@ import "../styles/globals.css";
 
 import { ThemeProvider } from "next-themes";
 import Head from "next/head";
+import { ToastContainer } from "react-toastify";
 
 import { Navbar, Footer } from "../components";
 import { NotificationProvider } from "@web3uikit/core";
@@ -10,6 +11,7 @@ import { MoralisProvider } from "react-moralis";
 import { Provider } from "react-redux";
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
 
+import 'react-toastify/dist/ReactToastify.css';
 import "../styles/globals.css";
 import { AppProps } from "next/app";
 import { store } from "../redux/store";
@@ -25,6 +27,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => (
       <ApolloProvider client={client}>
         <ThemeProvider attribute="class">
           <div className="dark:bg-nft-dark bg-white min-h-screen">
+            <ToastContainer/>
             <Head>
               <title>RealIncom</title>
               <meta

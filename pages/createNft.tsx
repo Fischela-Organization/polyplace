@@ -14,6 +14,7 @@ import { useMoralis, useWeb3Contract } from "react-moralis";
 import { nftAbi } from "../Artifacts/abi/abiManager";
 import { nftAddress } from "../Artifacts/contractAddress/contractManager";
 import { storeNFT } from "../utils/uploadNft";
+import { toast } from "react-toastify";
 
 // let Blob: typeof globalThis extends {
 //   onmessage: any;
@@ -48,7 +49,13 @@ const CreateNFT = () => {
     location: "",
     productLink: ""
   });
+  const handleError = (message: string) => {
+    toast.error(message)
+  }
 
+  const handleSuccess = (message: string) => {
+    toast.success(message)
+  }
   const { theme } = useTheme();
   const { account } = useMoralis();
   const { data, error, runContractFunction, isFetching, isLoading } =
@@ -97,7 +104,9 @@ const CreateNFT = () => {
       })
 
       await runContractFunction({
-       params
+       params,
+       onError: (e: any) => {handleError(e.data.message); console.log(e)},
+        onSuccess: () => handleSuccess("Success: Bid was placed successfuly")
       });
       console.log(data, account, "DATA");
       setIsLoad(false);

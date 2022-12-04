@@ -24,6 +24,7 @@ import { ethers } from "ethers";
 import { StatusReader } from "../../components/AuctionCard";
 import { fetchDocument, fetchImage } from "../../utils/fetchMetaData";
 import { AiFillWarning, AiOutlineFilePdf } from "react-icons/ai";
+import { toast } from "react-toastify";
 
 interface PaymentBodyCmpAuction {
   nft: any;
@@ -421,6 +422,15 @@ const AssetDetails = () => {
     bidAmount: 0,
   });
 
+  
+  const handleError = (message: string) => {
+    toast.error(message)
+  }
+
+  const handleSuccess = (message: string) => {
+    toast.success(message)
+  }
+
   const startAuction = async () => {
     try {
       setIsLoading(true);
@@ -445,7 +455,8 @@ const AssetDetails = () => {
         Math.floor(new Date(auctionDetails.endTime).getTime() / 1000),
         convertToWei(auctionDetails.reservedPrice)
       );
-      await runContractFunction({ params: options });
+      await runContractFunction({ params: options, onError: (e: any) => {handleError(e.data.message); console.log(e)},
+      onSuccess: () => handleSuccess("Success: Bid was placed successfuly") });
       console.log("GOT OUT", auctionDetails.endTime);
       setIsLoading(false);
     } catch (err) {
