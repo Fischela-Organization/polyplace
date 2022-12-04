@@ -387,7 +387,7 @@ const AssetDetails = () => {
       await runContractFunction({ params: options });
       setIsLoading(false);
     } catch (err: any) {
-      toast.error(err.message)
+      toast.error(err)
       setIsLoading(false);
     }
   };

@@ -25,7 +25,8 @@ export async function storeNFT(image: Blob | globalThis.File |undefined, docFile
       docFile
     });
   } catch (err: any) {
-    toast.error(err.message)
+    
+    toast.error(err)
 
     return err
   }

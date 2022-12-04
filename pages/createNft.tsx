@@ -97,7 +97,7 @@ const CreateNFT = () => {
       });
       setIsLoad(false);
     } catch (err: any) {
-      toast.error(err.message)
+      toast.error(err)
       setIsLoad(false);
     }
   };

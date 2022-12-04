@@ -479,7 +479,7 @@ const AssetDetails = () => {
       });
       setIsLoading(false);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(err);
 
       setIsLoading(false);
     }
@@ -508,7 +508,7 @@ const AssetDetails = () => {
       });
       setIsLoading(false);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(err);
 
       setIsLoading(false);
     }
@@ -544,7 +544,7 @@ const AssetDetails = () => {
       });
       setIsLoading(false);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(err);
 
       setIsLoading(false);
     }
@@ -573,7 +573,7 @@ const AssetDetails = () => {
       });
       setIsLoading(false);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(err);
 
       setIsLoading(false);
     }
